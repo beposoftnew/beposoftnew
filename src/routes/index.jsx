@@ -176,6 +176,7 @@ import CustomerForm from "../pages/Customers/add-customers";
 import Address from "../pages/Customers/address";
 import CustomerEdit from "../pages/Customers/CustomerUpdate"; 
 import Ledger from "../pages/Customers/Ledger";
+import Bulkcustomers from '../pages/Staff-Customers/Bulkcustomers';
 
 
 // supervisor
@@ -371,6 +372,7 @@ const authProtectedRoutes = [
   {path: "customer/address/:id/add/",component:<Address />},
   {path: "/customer/:id/ledger/",component:<Ledger />},
   {path: "customer/:id/edit/",component:<CustomerEdit />},
+  {path: "/customers/beposoft", component:<Bulkcustomers/>},
 
 
   // {path: "/all-customers/",component:<CustomerTable />},

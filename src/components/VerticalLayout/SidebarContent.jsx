@@ -237,6 +237,9 @@ const SidebarContent = (props) => {
                   <li>
                     <Link to="/add/staff/customer/">{props.t("Add Customers")}</Link>
                   </li>
+                  <li>
+                    <Link to="/customers/beposoft">{props.t("bulk customer upload")}</Link>
+                  </li>
                 </ul>
               </li>
             ) : null}

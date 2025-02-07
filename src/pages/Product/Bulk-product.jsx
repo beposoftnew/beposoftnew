@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { Button } from "react-bootstrap";
 const API_BASE_URL = import.meta.env.VITE_APP_KEY;
 const token = localStorage.getItem("token");
 
@@ -187,9 +186,10 @@ const OrdersComponent = () => {
 
   return (
     <div>
-      <Button onClick={fetchShopifyOrders} className="btn btn-primary w-md">
-        Import Shopify Orders
-      </Button>
+      <h3>Import Shopify Orders</h3>
+      <button onClick={fetchShopifyOrders} style={{ padding: "10px 20px", background:"green", color:"white", border:"none", marginTop:"50px", fontSize: "16px", cursor: "pointer" }}>
+        Import bepocart Orders
+      </button>
     </div>
   );
 };
