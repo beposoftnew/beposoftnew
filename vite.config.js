@@ -7,7 +7,16 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'), // Optional alias for cleaner imports
+      '@ckeditor': path.resolve(__dirname, 'node_modules/@ckeditor')
     },
+  },
+  optimizeDeps: {
+    include: ["@ckeditor/ckeditor5-watchdog"]
+  },
+  build: {
+    rollupOptions: {
+      external: ["@ckeditor/ckeditor5-watchdog"]
+    }
   },
   css: {
     preprocessorOptions: {
