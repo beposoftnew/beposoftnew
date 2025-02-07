@@ -6,27 +6,22 @@ export default defineConfig({
   plugins: [react()],
   resolve: {
     alias: {
-      '@': path.resolve(__dirname, './src'), // Optional alias for cleaner imports
-      '@ckeditor': path.resolve(__dirname, 'node_modules/@ckeditor')
+      '@': path.resolve(__dirname, './src'),
+      '@ckeditor': path.resolve(__dirname, 'node_modules/@ckeditor'),
     },
   },
   optimizeDeps: {
-    include: ["@ckeditor/ckeditor5-watchdog"]
+    include: [
+      "@ckeditor/ckeditor5-core",
+      "@ckeditor/ckeditor5-react",
+      "@ckeditor/ckeditor5-build-classic",
+      "@ckeditor/ckeditor5-watchdog",
+      "@ckeditor/ckeditor5-engine"
+    ],
   },
   build: {
     rollupOptions: {
-      external: ["@ckeditor/ckeditor5-watchdog"]
-    }
-  },
-  css: {
-    preprocessorOptions: {
-      scss: {
-        additionalData: `
-          @import "bootstrap/scss/functions";
-          @import "bootstrap/scss/variables";
-          @import "bootstrap/scss/mixins";
-        `,
-      },
+      external: [],
     },
   },
 });
