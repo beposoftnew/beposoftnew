@@ -4,7 +4,7 @@ import ReactApexChart from "react-apexcharts"
 import axios from 'axios';
 //import components
 import { JobWidgetCharts } from './JobCharts';
-import { cryptoReports } from '../../common/data'
+// import { cryptoReports } from '../../common/data'
 
 
 
@@ -39,7 +39,7 @@ const ChartSection = () => {
     return (
         <React.Fragment>
             <Row className="d-flex flex-wrap">
-                {(cryptoReports || []).map((report, key) => (
+                {/* {(cryptoReports || []).map((report, key) => (
                     <Col sm={6} md={4} lg={4} key={key} className="mb-4">
                         <Card>
                             <CardBody>
@@ -65,7 +65,7 @@ const ChartSection = () => {
                             </CardBody>
                         </Card>
                     </Col>
-                ))}
+                ))} */}
             </Row>
 
             <Row>

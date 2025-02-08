@@ -80,6 +80,9 @@ import DashboardCrypto from "../pages/Dashboard-crypto/index";
 import Blog from "../pages/Dashboard-Blog/index";
 import DashboardJob from "../pages/DashboardJob/index";
 
+
+
+
 // //Crypto
 import CryptoWallet from "../pages/Crypto/CryptoWallet/crypto-wallet";
 import CryptoBuySell from "../pages/Crypto/crypto-buy-sell";
@@ -363,7 +366,7 @@ const authProtectedRoutes = [
   //stafs
   { path: "/all-staffs", component: <StaffTable /> },
   { path: "/add-staffs", component: <StaffForm /> },
-  { path: "/edit/staffs/:id/", component: <StaffEdit /> },
+  { path: "/edit/staffs/:id/", component: <StaffEdit /> },  
 
 
   // customers

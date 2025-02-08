@@ -190,7 +190,7 @@ call api action to receive data
                   </h5>
                 </div>
 
-                <div className="mt-4 pt-2">
+                {/* <div className="mt-4 pt-2">
                   <p className="mb-2">
                     <i className="mdi mdi-circle align-middle font-size-10 me-2 text-warning" /> Bitcoin
                   </p>
@@ -198,7 +198,7 @@ call api action to receive data
                     {bitcoin ? bitcoin['BTC'] : ''} BTC =
                     <span className="text-muted font-size-14">$ {bitcoin ? bitcoin['Dollar'] : ''}</span>
                   </h5>
-                </div>
+                </div> */}
 
                 <div className="mt-4 pt-2">
                   <p className="mb-2">
