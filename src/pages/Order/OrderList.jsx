@@ -30,7 +30,7 @@ const BasicTable = () => {
     document.title = "Orders | Beposoft";
 
     useEffect(() => {
-        fetchOrders(`${import.meta.env.VITE_APP_KEY}orders/`);
+       if(token) fetchOrders(`${import.meta.env.VITE_APP_KEY}orders/`);
     }, [token]);
 
     const fetchOrders = async (url) => {

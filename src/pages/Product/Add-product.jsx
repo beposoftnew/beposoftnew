@@ -71,6 +71,7 @@ const FormLayouts = () => {
                 const response = await axios.post(`${import.meta.env.VITE_APP_KEY}add/product/`, values, {
                     headers: {
                         'Authorization': `Bearer ${token}`,
+                        "Accept": "application/json",
                     }
                 });
 

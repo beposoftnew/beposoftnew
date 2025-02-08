@@ -34,28 +34,34 @@ const BasicTable = () => {
     const fetchData = async (url = `${import.meta.env.VITE_APP_KEY}customers/`) => {
         try {
             setLoading(true);
-            const [response, responseState, responseManager] = await Promise.all([
-                axios.get(url, { headers: { 'Authorization': `Bearer ${token}` } }),
-                axios.get(`${import.meta.env.VITE_APP_KEY}states/`, { headers: { 'Authorization': `Bearer ${token}` } }),
-                axios.get(`${import.meta.env.VITE_APP_KEY}staffs/`, { headers: { 'Authorization': `Bearer ${token}` } })
-            ]);
-            
+    
+            // Fetch customers first
+            const response = await axios.get(url, { headers: { 'Authorization': `Bearer ${token}` } });
             if (response.status === 200) {
                 setData(response.data.results.data);
                 setNextPage(response.data.next);
                 setPrevPage(response.data.previous);
             }
-            if (responseState.status === 200) setStates(responseState.data.data);
-            if (responseManager.status === 200) setManager(responseManager.data.data);
+    
+            // Fetch states and managers in parallel (background)
+            Promise.all([
+                axios.get(`${import.meta.env.VITE_APP_KEY}states/`, { headers: { 'Authorization': `Bearer ${token}` } }),
+                axios.get(`${import.meta.env.VITE_APP_KEY}staffs/`, { headers: { 'Authorization': `Bearer ${token}` } })
+            ]).then(([responseState, responseManager]) => {
+                if (responseState.status === 200) setStates(responseState.data.data);
+                if (responseManager.status === 200) setManager(responseManager.data.data);
+            });
+    
         } catch (error) {
             setError(error.message || "Failed to fetch data");
         } finally {
             setLoading(false);
         }
     };
+    
 
     useEffect(() => {
-        fetchData();
+        if(token) fetchData();
     }, [token]);
 
 
