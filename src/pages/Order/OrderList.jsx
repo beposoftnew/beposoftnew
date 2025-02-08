@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import axios from "axios";
 import * as XLSX from "xlsx";
 import {
@@ -23,63 +23,36 @@ const BasicTable = () => {
     const [searchTerm, setSearchTerm] = useState("");
     const [selectedState, setSelectedState] = useState("");
     const [selectedStaff, setSelectedStaff] = useState("");
+    const [nextPage, setNextPage] = useState(null);
+    const [prevPage, setPrevPage] = useState(null);
     const token = localStorage.getItem("token");
 
     document.title = "Orders | Beposoft";
 
     useEffect(() => {
-        const fetchOrders = async () => {
-            try {
-                const response = await axios.get(`${import.meta.env.VITE_APP_KEY}orders/`, {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                });
-                setOrders(response.data);
-            } catch (error) {
-                setError("Error fetching orders data. Please try again later.");
-                console.error("Error fetching orders data:", error);
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        fetchOrders();
+        fetchOrders(`${import.meta.env.VITE_APP_KEY}orders/`);
     }, [token]);
 
-    // Status color based on status type
-    const getStatusColor = (status) => {
-        const statusColors = {
-            Pending: "red",
-            Approved: "blue",
-            Shipped: "yellow",
-            Processing: "orange",
-            Completed: "green",
-            Cancelled: "gray",
-        };
-        return { color: statusColors[status] || "black" };
+    const fetchOrders = async (url) => {
+        if (!url) return;
+        try {
+            setLoading(true);
+            const response = await axios.get(url, {
+                headers: { Authorization: `Bearer ${token}` },
+            });
+            setOrders(response.data.results);
+            setNextPage(response.data.next);
+            setPrevPage(response.data.previous);
+        } catch (error) {
+            setError("Error fetching orders data. Please try again later.");
+            console.error("Error fetching orders data:", error);
+        } finally {
+            setLoading(false);
+        }
     };
 
-    // Filtered data based on search and filter conditions
-    const filteredOrders = orders.filter((order) =>
-        (order.invoice.toLowerCase().includes(searchTerm.toLowerCase()) || order.manage_staff.toLowerCase().includes(searchTerm.toLowerCase())||
-            order.customer.name.toLowerCase().includes(searchTerm.toLowerCase())) &&
-        (selectedState === "" || order.status === selectedState) &&
-        (selectedStaff === "" || order.manage_staff === selectedStaff)
-    );
-
-    // Handle search input
-    const handleSearch = (e) => {
-        setSearchTerm(e.target.value);
-    };
-
-    // Export to Excel functionality
-    // Inside BasicTable component
-
-const exportToExcel = () => {
-    // Flattening the data structure to make it Excel-friendly
-    const formattedData = orders.flatMap((order, index) => {
-        return order.items.map((item, itemIndex) => ({
+    const exportToExcel = () => {
+        const formattedData = orders.map((order, index) => ({
             "Order #": index + 1,
             "Invoice No": order.invoice,
             "Order Date": order.order_date,
@@ -87,31 +60,18 @@ const exportToExcel = () => {
             "Customer Name": order.customer.name,
             "Customer Phone": order.customer.phone,
             "Customer Email": order.customer.email,
-            "Billing Address": `${order.billing_address.address}, ${order.billing_address.city}, ${order.billing_address.state}, ${order.billing_address.zipcode}`,  // Combined as a single string
+            "Billing Address": `${order.billing_address.address}, ${order.billing_address.city}, ${order.billing_address.state}, ${order.billing_address.zipcode}`,
             "Staff": order.manage_staff,
             "Family": order.family,
             "Total Amount": order.total_amount,
-            "Payment Method": order.payment_method,
-            "Bank": order.bank ? order.bank.name : "N/A",
-            "Item #": itemIndex + 1,
-            "Product Name": item.name,
-            "Quantity": item.quantity,
-            "Unit Price": item.price,
-            "Rate (Without GST)": item.rate,
-            "Tax %": item.tax,
-            "Exclude Price": item.exclude_price,
-            "Item Total": item.price * item.quantity,
-            // "Images": item.images.join(", ")  
+            "Payment Method": order.payment_method
         }));
-    });
 
-    const worksheet = XLSX.utils.json_to_sheet(formattedData);
-    const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, "Orders");
-
-    XLSX.writeFile(workbook, "Orders_List.xlsx");
-};
-
+        const worksheet = XLSX.utils.json_to_sheet(formattedData);
+        const workbook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(workbook, worksheet, "Orders");
+        XLSX.writeFile(workbook, "Orders_List.xlsx");
+    };
 
     return (
         <React.Fragment>
@@ -120,82 +80,44 @@ const exportToExcel = () => {
                     <Breadcrumbs title="Tables" breadcrumbItem="ORDER" />
                     <Row className="align-items-end mb-3">
                         <Col md={4}>
-                            <FormGroup className="w-100 mb-0">
+                            <FormGroup>
                                 <Label>Search by Invoice or Customer</Label>
-                                <Input
-                                    type="text"
-                                    placeholder="Search"
-                                    value={searchTerm}
-                                    onChange={handleSearch}
-                                />
+                                <Input type="text" placeholder="Search" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
                             </FormGroup>
                         </Col>
                         <Col md={3}>
-                            <FormGroup className="w-100 mb-0">
+                            <FormGroup>
                                 <Label>Filter by Status</Label>
-                                <Input
-                                    type="select"
-                                    value={selectedState}
-                                    onChange={(e) => setSelectedState(e.target.value)}
-                                >
+                                <Input type="select" value={selectedState} onChange={(e) => setSelectedState(e.target.value)}>
                                     <option value="">All Status</option>
-                                    <option value="Pending">Pending</option>
-                                    <option value="Approved">Approved</option>
-                                    <option value="Waiting For Confirmation">Waiting For Confirmation</option>
-                                    <option value="To Print">To Print</option>
-                                    <option value="Invoice Created">Invoice Created</option>
-                                    <option value="Invoice Approved">Invoice Approved</option>
-                                    <option value="Invoice Rejectd">Invoice Rejectd</option>
-                                    <option value="Shipped">Shipped</option>
-                                    <option value="Processing">Processing</option>
-                                    <option value="Refunded">Refunded</option>
-                                    <option value="Rejected">Rejected</option>
-                                    <option value="Return">Return</option>
-                                    <option value="Completed">Completed</option>
-                                    <option value="Cancelled">Cancelled</option>
-
+                                    {['Pending', 'Approved', 'Shipped', 'Processing', 'Completed', 'Cancelled'].map(status => (
+                                        <option key={status} value={status}>{status}</option>
+                                    ))}
                                 </Input>
                             </FormGroup>
                         </Col>
                         <Col md={3}>
-                            <FormGroup className="w-100 mb-0">
+                            <FormGroup>
                                 <Label>Filter by Staff</Label>
-                                <Input
-                                    type="select"
-                                    value={selectedStaff}
-                                    onChange={(e) => setSelectedStaff(e.target.value)}
-                                >
+                                <Input type="select" value={selectedStaff} onChange={(e) => setSelectedStaff(e.target.value)}>
                                     <option value="">All Staff</option>
                                     {[...new Set(orders.map(order => order.manage_staff))].map((staff, index) => (
-                                        <option key={index} value={staff}>
-                                            {staff}
-                                        </option>
+                                        <option key={index} value={staff}>{staff}</option>
                                     ))}
                                 </Input>
                             </FormGroup>
                         </Col>
                         <Col md={2} className="d-flex justify-content-end">
-                            <Button color="success" onClick={exportToExcel} className="w-100">
-                                Export to Excel
-                            </Button>
+                            <Button color="success" onClick={exportToExcel}>Export to Excel</Button>
                         </Col>
                     </Row>
-
-
                     <Row>
                         <Col xl={12}>
                             <Card>
                                 <CardBody>
                                     <CardTitle className="h4">BEPOSOFT ORDERS</CardTitle>
-
                                     <div className="table-responsive">
-                                        {loading ? (
-                                            <div>Loading...</div>
-                                        ) : error ? (
-                                            <div className="text-danger">{error}</div>
-                                        ) : filteredOrders.length === 0 ? (
-                                            <div>No orders available.</div>
-                                        ) : (
+                                        {loading ? <div>Loading...</div> : error ? <div className="text-danger">{error}</div> : (
                                             <Table className="table mb-0">
                                                 <thead>
                                                     <tr>
@@ -209,19 +131,13 @@ const exportToExcel = () => {
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    {filteredOrders.map((order, index) => (
+                                                    {orders.map((order, index) => (
                                                         <tr key={order.id}>
                                                             <th scope="row">{index + 1}</th>
-                                                            <td>
-                                                                <Link to={`/order/${order.id}/items/`}>
-                                                                    {order.invoice}
-                                                                </Link>
-                                                            </td>
+                                                            <td><Link to={`/order/${order.id}/items/`}>{order.invoice}</Link></td>
                                                             <td>{order.manage_staff} ({order.family})</td>
                                                             <td>{order.customer.name}</td>
-                                                            <td style={getStatusColor(order.status)}>
-                                                                {order.status}
-                                                            </td>
+                                                            <td>{order.status}</td>
                                                             <td>{order.total_amount}</td>
                                                             <td>{order.order_date}</td>
                                                         </tr>
@@ -229,6 +145,10 @@ const exportToExcel = () => {
                                                 </tbody>
                                             </Table>
                                         )}
+                                    </div>
+                                    <div className="d-flex justify-content-between mt-3">
+                                        <Button disabled={!prevPage} onClick={() => fetchOrders(prevPage)}>Previous</Button>
+                                        <Button disabled={!nextPage} onClick={() => fetchOrders(nextPage)}>Next</Button>
                                     </div>
                                 </CardBody>
                             </Card>
