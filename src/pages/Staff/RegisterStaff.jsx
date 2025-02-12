@@ -142,11 +142,13 @@ const FormLayouts = () => {
         
                 if (response.status === 201) {
                     setSuccess("Form submitted successfully");
+                    console.log("Form submitted successfully", response);
                     resetForm(); // Clear the form
                     setTimeout(() => setSuccess(null), 3000);
                 } else {
                     setError("Failed to submit the form");
                     setTimeout(() => setError(null), 3000); 
+                    console.log("error", response);
                 }
         
             } catch (err) {
@@ -164,7 +166,8 @@ const FormLayouts = () => {
                     }
                     // Handle other fields as necessary
                 } else {
-                    setError("An error occurred. Please try again.");
+                    // setError("An error occurred. Please try again.", err);
+                    console.log("erro", err)
                 }
             }
         }

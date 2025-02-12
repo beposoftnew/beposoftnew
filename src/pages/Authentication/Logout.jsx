@@ -1,25 +1,13 @@
-import React, { useEffect } from "react";
-import PropTypes from "prop-types";
-import withRouter from "../../components/Common/withRouter";
-import { logoutUser } from "../../store/actions";
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
 
-//redux
-import { useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
 
 const Logout = () => {
-  const history = useNavigate();
-  const dispatch = useDispatch();
 
-  useEffect(() => {
-    dispatch(logoutUser(history));
-  }, [dispatch, history]);
-
-  return <></>;
+  localStorage.removeItem("token");
+  const navigate = useNavigate();
+  navigate('/login')
 };
 
-Logout.propTypes = {
-  history: PropTypes.object,
-};
 
-export default withRouter(Logout);
+export default Logout;
