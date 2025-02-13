@@ -228,7 +228,7 @@ useEffect(() => {
 
 
 
-            {role === 'BDO' ? (
+            {role === 'SAlES' ? (
               <li>
                 <Link to="/#" className="has-arrow">
                   <FaUserTie size={17} style={{ marginRight: '6px' }} />
@@ -266,7 +266,7 @@ useEffect(() => {
               </li>
             ) : null}
 
-            {role === 'BDM' ? (
+            {role === 'SAlES' ? (
               <li>
                 <Link to="/#" className="has-arrow">
                   <FaUsers size={20} style={{ marginRight: '8px' }} />
@@ -283,7 +283,7 @@ useEffect(() => {
               </li>
             ) : null}
 
-            {role === 'BDO' ? (
+            {role === 'BDM' ? (
               <li>
                 <Link to="/#" className="has-arrow">
                   <FaUsers size={20} style={{ marginRight: '8px' }} />
