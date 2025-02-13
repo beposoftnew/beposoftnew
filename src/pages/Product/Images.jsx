@@ -126,6 +126,9 @@ const FormLayouts = () => {
         return <p>Error: {error}</p>;
     }
 
+                                                  
+    console.log("images..:",images);
+
     return (
         <React.Fragment>
             <div className="page-content">
@@ -203,7 +206,7 @@ const FormLayouts = () => {
                                                         <Col md={1} key={index} className="mb-3">
                                                             <div className="image-preview">
                                                                 <img
-                                                                    src={image.image}
+                                                                    src={`${import.meta.env.VITE_APP_IMAGE}/${image}`}
                                                                     alt={`Product-${index}`}
                                                                     className="img-fluid"
                                                                     style={{

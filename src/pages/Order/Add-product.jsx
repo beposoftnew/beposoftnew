@@ -11,7 +11,7 @@ import {
     Collapse,
 } from "reactstrap";
 
-const AddProduct = ({ isOpen, toggle,warehouseId }) => {
+const AddProduct = ({ isOpen, toggle,warehouseId, ProductsFetch }) => {
     const [products, setProducts] = useState([]); // Initialize products state with an empty array
     const [searchQuery, setSearchQuery] = useState("");
     const [loading, setLoading] = useState(false);
@@ -61,6 +61,8 @@ console.log(warehouseId);
             setLoading(false);
         }
     };
+
+    console.log("produvtsss", products);
 
     const fetchwarehouseProduct = async () => {
         setLoading(true);
@@ -142,6 +144,7 @@ console.log(warehouseId);
 
             if (response.status === 201) {
                 alert("Product added to cart successfully!");
+                ProductsFetch();
             }
         } catch (error) {
             console.error("Failed to add product to cart", error);
@@ -193,7 +196,7 @@ console.log(warehouseId);
                                                 <td>{index + 1}</td>
                                                 <td>
                                                     <img
-                                                        src={product.image}
+                                                        src={`${import.meta.env.VITE_APP_IMAGE}/${product.image}`}
                                                         alt={product.name}
                                                         style={{ width: "50px", height: "50px", objectFit: "cover" }}
                                                     />

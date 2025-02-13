@@ -39,33 +39,7 @@ const ChartSection = () => {
     return (
         <React.Fragment>
             <Row className="d-flex flex-wrap">
-                {/* {(cryptoReports || []).map((report, key) => (
-                    <Col sm={6} md={4} lg={4} key={key} className="mb-4">
-                        <Card>
-                            <CardBody>
-                                <p className="text-muted mb-4">
-                                    <i className={report.icon + " h2 text-" + report.color + " align-middle mb-0 me-3"} />
-                                    {report.title}
-                                </p>
-                                <Row>
-                                    <Col xs={6}>
-                                        <div>
-                                            <h5>{report.value}</h5>
-                                            <p className="text-muted text-truncate mb-0">
-                                                {report.desc} <i className={report.arrowUpDown} />
-                                            </p>
-                                        </div>
-                                    </Col>
-                                    <Col xs={6}>
-                                        <div>
-                                            <ReactApexChart options={report.options} series={report.series} type="area" height={40} className="apex-charts" />
-                                        </div>
-                                    </Col>
-                                </Row>
-                            </CardBody>
-                        </Card>
-                    </Col>
-                ))} */}
+           
             </Row>
 
             <Row>
@@ -80,7 +54,7 @@ const ChartSection = () => {
                                     </div>
 
                                     <div className="flex-shrink-0 align-self-center">
-                                        <JobWidgetCharts dataColors={item.color} series={item.seriesData} dir="ltr" />
+                                        {/* <JobWidgetCharts dataColors={item.color} series={item.seriesData} dir="ltr" /> */}
                                     </div>
                                 </div>
                             </CardBody>

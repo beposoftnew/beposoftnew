@@ -8,6 +8,8 @@ import AddProduct from "./Add-product";
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
 import { Link } from "react-router-dom";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const FormLayouts = () => {
     // Meta title
@@ -88,6 +90,16 @@ const FormLayouts = () => {
                 if (response.status === 201) {
                     console.log("Data saved successfully:", response.data);
                     formik.resetForm();
+                    toast.success("order create success !", {
+                        position: "top-right",
+                        autoClose: 4000, // Auto close after 3 seconds
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        draggable: true,
+                        progress: undefined,
+                        theme: "colored",
+                      });
                 }
             } catch (error) {
                 console.error("Error saving data:", error);
@@ -146,7 +158,7 @@ const FormLayouts = () => {
                         setStaffs(ManagedResponse.data.data);
                     }
                     if (staffcustomersResponse.status === 200) {
-                        setCustomers(staffcustomersResponse.data.data);
+                        setCustomers(staffcustomersResponse?.data.results?.data);
                     }
                     if (StaffResponse.status === 200) {
                         const user = StaffResponse.data.data;
@@ -188,6 +200,13 @@ const FormLayouts = () => {
             setLoading(false);
         }
     }, [token,]);
+
+
+
+
+
+
+    console.log("customers detailssss..:", customers);
 
 
     console.log("warehouse details..:", warehouseDetails);
@@ -263,7 +282,7 @@ const FormLayouts = () => {
         if (token) {
             fetchCartProducts();
         }
-    }, [token, cartProducts]);
+    }, [token]);
 
     // Function to update the cart product
     const updateCartProduct = async (productId, updatedFields) => {
@@ -298,17 +317,21 @@ const FormLayouts = () => {
 
     const handleDiscountChange = (index, newDiscount) => {
         const updatedCartProducts = [...cartProducts];
-        updatedCartProducts[index].discount = parseFloat(newDiscount);
-        setCartProducts(updatedCartProducts);
+        updatedCartProducts[index].discount = parseFloat(newDiscount) || 0;
+        
+        setCartProducts(updatedCartProducts); // Update cart state
         updateCartProduct(updatedCartProducts[index].id, { discount: newDiscount });
     };
+    
 
     const handleQuantityChange = (index, newQuantity) => {
         const updatedCartProducts = [...cartProducts];
-        updatedCartProducts[index].quantity = parseInt(newQuantity, 10);
-        setCartProducts(updatedCartProducts);
+        updatedCartProducts[index].quantity = parseInt(newQuantity, 10) || 1;
+        
+        setCartProducts(updatedCartProducts); // Update cart state
         updateCartProduct(updatedCartProducts[index].id, { quantity: newQuantity });
     };
+    
 
     const handleRemoveProduct = async (productId) => {
         try {
@@ -342,9 +365,34 @@ const FormLayouts = () => {
 
     const isInvalid = (name) => formik.touched[name] && formik.errors[name] ? true : false;
 
+useEffect(() => {
+    if (cartProducts.length > 0) {
+        const totalAmount = cartProducts.reduce((acc, product) => {
+            return acc + (product.price * product.quantity);
+        }, 0);
+
+        const totalDiscount = cartProducts.reduce((acc, product) => {
+            return acc + ((product.discount || 0) * product.quantity);
+        }, 0);
+
+        const finalAmountAfterDiscount = totalAmount - totalDiscount;
+
+        // Update states dynamically
+        setCartTotalAmount(totalAmount);
+        setCartTotalDiscount(totalDiscount);
+        setFinalAmount(finalAmountAfterDiscount);
+    } else {
+        // Reset to zero when cart is empty
+        setCartTotalAmount(0);
+        setCartTotalDiscount(0);
+        setFinalAmount(0);
+    }
+}, [cartProducts]); // Runs whenever cartProducts changes
 
 
 
+
+console.log("cartproducts..:", cartProducts);
 
     return (
         <React.Fragment>
@@ -651,7 +699,7 @@ const FormLayouts = () => {
                                                                                     <td>{index + 1}</td>
                                                                                     <td>
                                                                                         <img
-                                                                                            src={product.image}
+                                                                                            src={`${import.meta.env.VITE_APP_IMAGE}/${product.image}`}
                                                                                             alt={product.name || "Product image"}
                                                                                             style={{ width: "50px", height: "50px" }}
                                                                                         />
@@ -711,6 +759,7 @@ const FormLayouts = () => {
 
                                                             {/* AddProduct Modal */}
                                                             <AddProduct
+                                                                ProductsFetch = {fetchCartProducts}
                                                                 isOpen={modalOpen}
                                                                 toggle={toggleModal}
                                                                 onSelectProduct={handleProductSelect}
@@ -742,7 +791,7 @@ const FormLayouts = () => {
                                                                 invalid={formik.touched.payment_status && formik.errors.payment_status ? true : false}
                                                             >
                                                                 <option value="">Select</option>
-                                                                <option value="payed">Paid</option>
+                                                                <option value="paid">Paid</option>
                                                                 <option value="COD">COD</option>
                                                                 <option value="credit">Credit</option>
                                                             </Input>
@@ -784,10 +833,10 @@ const FormLayouts = () => {
                                                                 <option value="">Select</option>
                                                                 <option value="Credit Card">Credit Card</option>
                                                                 <option value="Debit Card">Debit Card</option>
-                                                                <option value="Net Banking">Net Banking</option>
-                                                                <option value="PayPal">PayPal</option>
-                                                                <option value="Razorpay">Razorpay</option>
-                                                                <option value="Cash on Delivery">Cash on Delivery</option>
+                                                                <option value="Net Bankng">Net Banking</option>
+                                                                <option value="PayPal'">PayPal</option>
+                                                                <option value="1 Razorpay">Razorpay</option>
+                                                                <option value="Cash on Delivery (COD)">Cash on Delivery</option>
                                                                 <option value="Bank Transfer">Bank Transfer</option>
                                                             </Input>
                                                             {formik.errors.payment_method && formik.touched.payment_method ? (
@@ -829,6 +878,7 @@ const FormLayouts = () => {
                         </Col>
                     </Row>
                 </Container>
+                <ToastContainer />
             </div>
         </React.Fragment>
     );

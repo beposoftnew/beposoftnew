@@ -196,11 +196,13 @@ const BasicTable = () => {
                                                             <tr key={product.id} className="text-center">
                                                                 <th scope="row">{index + 1}</th>
                                                                 <td>
-                                                                    <img
-                                                                        src={product.image || (product.images && product.images[0]?.image) || 'fallback-image-url'}
-                                                                        alt={product.name}
-                                                                        style={{ width: "60px", height: "60px", objectFit: "cover", borderRadius: "5px" }}
-                                                                    />
+                                                                <img
+    src={`${import.meta.env.VITE_APP_IMAGE}/${product.image || (product.images && `${import.meta.env.VITE_APP_IMAGE}/${product.images[0]?.image}`) || 'fallback-image-url'}`}
+    alt={product.name}
+    style={{ width: "60px", height: "60px", objectFit: "cover", borderRadius: "5px" }}
+/>
+
+
                                                                 </td>
 
                                                                 <td style={{ cursor: 'pointer' }} onClick={() => handleProductClick(product.id, product.type)}>

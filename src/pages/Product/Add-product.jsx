@@ -66,6 +66,8 @@ const FormLayouts = () => {
         onSubmit: async (values) => {
 
             console.log("form field valies...:", values);
+            console.log("Submitting data:", values);
+
             try {
                 // Post the form data using axios
                 const response = await axios.post(`${import.meta.env.VITE_APP_KEY}add/product/`, values, {
@@ -358,12 +360,16 @@ const FormLayouts = () => {
                                             <Col lg={2}>
                                                 <div className="mb-3">
                                                     <Label htmlFor="formrow-product_type-Input">Product Type</Label>
-                                                    <select
+                                                    <Input
+                                                        type="select"
                                                         name="product_type"
                                                         id="formrow-product_type-Input"
                                                         className="form-control"
                                                         value={formik.values.product_type}
-                                                        onChange={formik.handleChange}
+                                                        onChange={(e) => {
+                                                            console.log("Selected product type:", e.target.value); // Debugging
+                                                            formik.setFieldValue("product_type", e.target.value);
+                                                        }}
                                                         onBlur={formik.handleBlur}
                                                         invalid={formik.touched.product_type && formik.errors.product_type}
                                                     >
@@ -371,12 +377,14 @@ const FormLayouts = () => {
                                                         {TYPES.map((type) => (
                                                             <option key={type.value} value={type.value}>{type.label}</option>
                                                         ))}
-                                                    </select>
+                                                    </Input>
                                                     {formik.errors.product_type && formik.touched.product_type && (
                                                         <FormFeedback>{formik.errors.product_type}</FormFeedback>
                                                     )}
                                                 </div>
                                             </Col>
+
+
                                             <Col lg={2}>
                                                 <div className="mb-3">
                                                     <Label htmlFor="formrow-groupID-Input">Group ID</Label>
