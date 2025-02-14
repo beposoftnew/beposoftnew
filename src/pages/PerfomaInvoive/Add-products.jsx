@@ -11,7 +11,7 @@ import {
     Collapse,
 } from "reactstrap";
 
-const AddProduct = ({ isOpen, toggle }) => {
+const AddProduct = ({ isOpen, toggle ,ProductsFetch }) => {
     const [products, setProducts] = useState([]); // Initialize products state with an empty array
     const [searchQuery, setSearchQuery] = useState("");
     const [loading, setLoading] = useState(false);
@@ -98,6 +98,7 @@ const AddProduct = ({ isOpen, toggle }) => {
             );
 
             if (response.status === 201) {
+                ProductsFetch();
                 alert("Product added to cart successfully!");
             }
         } catch (error) {

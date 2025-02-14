@@ -833,7 +833,7 @@ console.log("cartproducts..:", cartProducts);
                                                                 <option value="">Select</option>
                                                                 <option value="Credit Card">Credit Card</option>
                                                                 <option value="Debit Card">Debit Card</option>
-                                                                <option value="Net Bankng">Net Banking</option>
+                                                                <option value="Net Banking'">Net Banking</option>
                                                                 <option value="PayPal'">PayPal</option>
                                                                 <option value="1 Razorpay">Razorpay</option>
                                                                 <option value="Cash on Delivery (COD)">Cash on Delivery</option>
