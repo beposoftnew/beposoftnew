@@ -28,7 +28,7 @@ const Warehouseorders = () => {
                         Authorization: `Bearer ${token}`,
                     },
                 });
-                setOrders(response.data);
+                setOrders(response.data?.results);
             } catch (error) {
                 setError("Error fetching orders data. Please try again later.");
                 console.error("Error fetching orders data:", error);
