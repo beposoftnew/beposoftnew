@@ -214,7 +214,7 @@ const AddProduct = ({ isOpen, toggle, onSelectProduct, onCartUpdate }) => {
                                                     />
                                                 </td>
                                                 <td>{product.name}</td>
-                                                <td>${product.selling_price.toFixed(2)}</td>
+                                                <td>₹{product.selling_price.toFixed(2)}</td>
                                                 <td>{product.stock}</td>
                                                 {product.type === "single" && (
                                                     <td>

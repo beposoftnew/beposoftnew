@@ -31,7 +31,7 @@ const BasicTable = () => {
                     },
                 });
 
-                const filteredOrders = response.data.filter(
+                const filteredOrders = response.data.results?.filter(
                     (order) =>
                         order.staffID === id && order.order_date === date
                 );

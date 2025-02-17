@@ -244,8 +244,7 @@ useEffect(() => {
                 </ul>
               </li>
             ) : null}
-
-
+            
             {role === 'BDM' ? (
               <li>
                 <Link to="/#" className="has-arrow">
@@ -266,7 +265,7 @@ useEffect(() => {
               </li>
             ) : null}
 
-            {role === 'SAlES' ? (
+            {role === 'BDO' ? (
               <li>
                 <Link to="/#" className="has-arrow">
                   <FaUsers size={20} style={{ marginRight: '8px' }} />

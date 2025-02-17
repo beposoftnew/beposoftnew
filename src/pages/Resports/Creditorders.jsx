@@ -30,7 +30,7 @@ const BasicTable = () => {
                     },
                 });
 
-                const filteredOrders = response.data.filter(
+                const filteredOrders = response.data?.results?.filter(
                     (order) =>
                         order.payment_status === "credit" && order.order_date === date
                 );

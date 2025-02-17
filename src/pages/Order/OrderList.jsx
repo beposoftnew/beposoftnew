@@ -51,6 +51,9 @@ const BasicTable = () => {
         }
     };
 
+
+    console.log("results", orders );
+
     const exportToExcel = () => {
         const formattedData = orders.map((order, index) => ({
             "Order #": index + 1,

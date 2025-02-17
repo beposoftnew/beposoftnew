@@ -112,6 +112,9 @@ const FormLayouts = () => {
         }
     });
 
+
+    console.log("compony details..:", companys);
+
     const generateInvoice = async () => {
         const doc = new jsPDF();
         const invoiceElement = document.getElementById("invoice-content");

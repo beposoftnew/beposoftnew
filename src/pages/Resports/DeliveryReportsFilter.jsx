@@ -23,7 +23,7 @@ const BasicTable = () => {
                 });
 
                 // Filter orders based on the warehouse shipped_date matching the date parameter
-                const filteredOrders = response.data.filter((order) =>
+                const filteredOrders = response.data.results.filter((order) =>
                     order.warehouse.some((parcel) => parcel.shipped_date === date)
                 );
 

@@ -38,7 +38,7 @@ const BasicTable = () => {
             // Fetch customers first
             const response = await axios.get(url, { headers: { 'Authorization': `Bearer ${token}` } });
             if (response.status === 200) {
-                setData(response.data.results.data);
+                setData(response?.data?.data);
                 setNextPage(response.data.next);
                 setPrevPage(response.data.previous);
             }
