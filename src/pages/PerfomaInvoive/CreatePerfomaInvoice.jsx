@@ -107,6 +107,16 @@ const FormLayouts = () => {
                 }
             } catch (error) {
                 console.error("Error saving data:", error);
+                toast.error("error creating performa invoicess !", {
+                    position: "top-right",
+                    autoClose: 4000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "colored",
+                  });
                 setError((prevError) => ({ ...prevError, submitError: "Failed to save data" }));
             }
         }
@@ -155,7 +165,7 @@ const FormLayouts = () => {
                         setStaffs(ManagedResponse.data.data);
                     }
                     if (staffcustomersResponse.status === 200) {
-                        setCustomers(staffcustomersResponse.data.results?.data);
+                        setCustomers(staffcustomersResponse.data?.data);
                     }
                     if (StaffResponse.status === 200) {
                         const user = StaffResponse.data.data;
@@ -174,7 +184,7 @@ const FormLayouts = () => {
                         setBank(bankResponse.data.data);
                     }
                     if (companyResponse.status === 200) {
-                        setCompany(companyResponse.data.data);
+                        setCompany(companyResponse.data?.data);
                     }
                     if (warehouseResponse.status === 200) {
                         setWarehouseDetails(warehouseResponse.data);
@@ -194,9 +204,13 @@ const FormLayouts = () => {
     }, [token,]);
 
 
-    console.log("componies..:", companys);
+    console.log("customers", customers);
+    console.log(" family", familys);
 
-    // Search and select customer
+    console.log("componies..:", companys); 
+    console.log(" state report", states);
+
+    // Search and select customer   
     const handleSearchChange = (event) => {
         setSearchTerm(event.target.value);
     };

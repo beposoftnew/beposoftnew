@@ -158,7 +158,7 @@ const FormLayouts = () => {
                         setStaffs(ManagedResponse.data.data);
                     }
                     if (staffcustomersResponse.status === 200) {
-                        setCustomers(staffcustomersResponse?.data.results?.data);
+                        setCustomers(staffcustomersResponse?.data?.data);
                     }
                     if (StaffResponse.status === 200) {
                         const user = StaffResponse.data.data;

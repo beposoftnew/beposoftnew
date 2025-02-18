@@ -173,11 +173,11 @@ const DepartmentTable = () => {
     return (
         <div className="page-content">
             <div className="container-fluid">
-                <Breadcrumbs title="Tables" breadcrumbItem="States Information" />
+                <Breadcrumbs title="Tables" breadcrumbItem="Departmenet Information" />
 
                 {/* Add State Button */}
                 <Button color="success" onClick={handleAddState} className="mb-4">
-                    Add State
+                    Add Department
                 </Button>
 
                 {loading ? (

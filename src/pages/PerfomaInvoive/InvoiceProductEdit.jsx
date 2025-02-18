@@ -208,13 +208,13 @@ const AddProduct = ({ isOpen, toggle, onSelectProduct, onCartUpdate }) => {
                                                 <td>{index + 1}</td>
                                                 <td>
                                                     <img
-                                                        src={`http://localhost:8000${product.image}`}
+                                                        src={`${import.meta.env.VITE_APP_IMAGE}${product.image}`}
                                                         alt={product.name}
                                                         style={{ width: "50px", height: "50px", objectFit: "cover" }}
                                                     />
                                                 </td>
                                                 <td>{product.name}</td>
-                                                <td>${product.selling_price.toFixed(2)}</td>
+                                                <td>₹{product.selling_price.toFixed(2)}</td>
                                                 <td>{product.stock}</td>
                                                 {product.type === "single" && (
                                                     <td>

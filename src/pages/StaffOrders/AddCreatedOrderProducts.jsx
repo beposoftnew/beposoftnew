@@ -208,7 +208,7 @@ const AddProduct = ({ isOpen, toggle, onSelectProduct, onCartUpdate }) => {
                                                 <td>{index + 1}</td>
                                                 <td>
                                                     <img
-                                                        src={`${product.image}`}
+                                                        src={`${import.meta.env.VITE_APP_IMAGE}/${product.image}`}
                                                         alt={product.name}
                                                         style={{ width: "50px", height: "50px", objectFit: "cover" }}
                                                     />

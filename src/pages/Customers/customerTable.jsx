@@ -25,55 +25,64 @@ const BasicTable = () => {
     const [error, setError] = useState(null);
     const [searchTerm, setSearchTerm] = useState("");
     const [selectedState, setSelectedState] = useState("");
-    const [selectedManager, setSelectedManager] = useState("");
-    const [nextPage, setNextPage] = useState(null);
-    const [prevPage, setPrevPage] = useState(null);
     const token = localStorage.getItem('token');
     const navigate = useNavigate();
 
-    const fetchData = async (url = `${import.meta.env.VITE_APP_KEY}customers/`) => {
-        try {
-            setLoading(true);
-    
-            // Fetch customers first
-            const response = await axios.get(url, { headers: { 'Authorization': `Bearer ${token}` } });
-            if (response.status === 200) {
-                setData(response?.data?.data);
-                setNextPage(response.data.next);
-                setPrevPage(response.data.previous);
-            }
-    
-            // Fetch states and managers in parallel (background)
-            Promise.all([
-                axios.get(`${import.meta.env.VITE_APP_KEY}states/`, { headers: { 'Authorization': `Bearer ${token}` } }),
-                axios.get(`${import.meta.env.VITE_APP_KEY}staffs/`, { headers: { 'Authorization': `Bearer ${token}` } })
-            ]).then(([responseState, responseManager]) => {
-                if (responseState.status === 200) setStates(responseState.data.data);
-                if (responseManager.status === 200) setManager(responseManager.data.data);
-            });
-    
-        } catch (error) {
-            setError(error.message || "Failed to fetch data");
-        } finally {
-            setLoading(false);
-        }
-    };
-    
-
     useEffect(() => {
-        if(token) fetchData();
+        const fetchData = async () => {
+            try {
+                setLoading(true);
+
+                // Step 1: Fetch customers first
+                const customerResponse = await axios.get(`${import.meta.env.VITE_APP_KEY}customers/`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (customerResponse.status === 200) {
+                    setData(customerResponse.data.data);
+
+                    // Step 2: Fetch states and managers only after customers are fetched
+                    const [responseState, responseManager] = await Promise.all([
+                        axios.get(`${import.meta.env.VITE_APP_KEY}states/`, { headers: { 'Authorization': `Bearer ${token}` } }),
+                        axios.get(`${import.meta.env.VITE_APP_KEY}staffs/`, { headers: { 'Authorization': `Bearer ${token}` } })
+                    ]);
+
+                    if (responseState.status === 200) setStates(responseState.data.data);
+                    if (responseManager.status === 200) setManager(responseManager.data.data);
+                }
+
+            } catch (error) {
+                setError(error.message || "Failed to fetch data");
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        if (token) fetchData();
     }, [token]);
 
+    const handleSearch = (e) => {
+        setSearchTerm(e.target.value);
+    };
 
-    console.log("data indormation", data);
+    const handleStateFilter = (e) => {
+        setSelectedState(e.target.value);
+    };
 
     const filteredData = data.filter((customer) =>
-        (customer.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            customer.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            customer.phone.toLowerCase().includes(searchTerm.toLowerCase())) &&
-        (selectedState === "" || customer.state === selectedState) &&
-        (selectedManager === "" || customer.manager === selectedManager)
-    );
+        (customer.name.toLowerCase().includes(searchTerm.toLowerCase()) ))
+
+    const handleUpdate = (customerId) => {
+        navigate(`/customer/${customerId}/edit/`);
+    };
+
+    const handleAddress = (customerId) => {
+        navigate(`/customer/address/${customerId}/add/`);
+    };
+
+    const handleLedger = (customerId) => {
+        navigate(`/customer/${customerId}/ledger/`);
+    };
 
     const exportToExcel = () => {
         const formattedData = filteredData.map((customer, index) => ({
@@ -83,17 +92,21 @@ const BasicTable = () => {
             "GST": customer.gst || 'N/A',
             "Email": customer.email || 'N/A',
             "Phone": customer.phone || 'N/A',
+            "Alt Phone": customer.alt_phone || 'N/A',
             "City": customer.city || 'N/A',
             "State": customer.state || 'N/A',
             "Zip": customer.zip_code || 'N/A',
-            "Address": customer.address || 'N/A'
+            "Address": customer.address || 'N/A',
         }));
 
         const worksheet = XLSX.utils.json_to_sheet(formattedData);
         const workbook = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(workbook, worksheet, "Customers");
+
         XLSX.writeFile(workbook, "Customer_List.xlsx");
     };
+
+    document.title = "Customer List | Dashboard Template";
 
     return (
         <React.Fragment>
@@ -107,83 +120,89 @@ const BasicTable = () => {
                                     <CardSubtitle className="card-title-desc">
                                         Filter and view customer data.
                                     </CardSubtitle>
+
                                     <Row className="align-items-center mb-3">
-                                        <Col md={4}>
-                                            <FormGroup>
-                                                <Label for="stateFilter">Filter by State</Label>
+                                        <Col md={6}>
+                                            <FormGroup className="mb-0">
+                                                <Input
+                                                    type="text"
+                                                    placeholder="Search by name"
+                                                    value={searchTerm}
+                                                    onChange={handleSearch}
+                                                    className="w-100"
+                                                />
+                                            </FormGroup>
+                                        </Col>
+                                        {/* <Col md={5}>
+                                            <FormGroup className="mb-0">
+                                                <Label for="stateFilter" className="mb-1">Filter by State</Label>
                                                 <Input
                                                     type="select"
                                                     id="stateFilter"
                                                     value={selectedState}
-                                                    onChange={(e) => setSelectedState(e.target.value)}
+                                                    onChange={handleStateFilter}
+                                                    className="w-100"
                                                 >
                                                     <option value="">All States</option>
                                                     {states.map((state) => (
-                                                        <option key={state.id} value={state.name}>{state.name}</option>
+                                                        <option key={state.id} value={state.name}>
+                                                            {state.name}
+                                                        </option>
                                                     ))}
                                                 </Input>
                                             </FormGroup>
-                                        </Col>
-                                        <Col md={4}>
-                                            <FormGroup>
-                                                <Label for="managerFilter">Filter by Manager</Label>
-                                                <Input
-                                                    type="select"
-                                                    id="managerFilter"
-                                                    value={selectedManager}
-                                                    onChange={(e) => setSelectedManager(e.target.value)}
-                                                >
-                                                    <option value="">All Managers</option>
-                                                    {managers.map((manager) => (
-                                                        <option key={manager.id} value={manager.name}>{manager.name}</option>
-                                                    ))}
-                                                </Input>
-                                            </FormGroup>
-                                        </Col>
-                                        <Col md={4}>
-                                            <Button color="success" onClick={exportToExcel}>Export to Excel</Button>
+                                        </Col> */}
+                                        <Col md={4} style={{marginTop:"-1px"}} className="d-flex justify-content-end">
+                                            <Button color="success" onClick={exportToExcel} className="w-100">
+                                                Export to Excel
+                                            </Button>
                                         </Col>
                                     </Row>
-                                    <Table bordered striped hover>
-                                        <thead>
-                                            <tr>
-                                                <th>#</th>
-                                                <th>Name</th>
-                                                <th>Manager</th>
-                                                <th>GST</th>
-                                                <th>Email</th>
-                                                <th>Phone</th>
-                                                <th>City</th>
-                                                <th>State</th>
-                                                <th>Zip</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            {filteredData.length > 0 ? (
-                                                filteredData.map((customer, index) => (
-                                                    <tr key={customer.id}>
-                                                        <th scope="row">{index + 1}</th>
-                                                        <td>{customer.name}</td>
-                                                        <td>{customer.manager}</td>
-                                                        <td>{customer.gst || 'N/A'}</td>
-                                                        <td>{customer.email || 'N/A'}</td>
-                                                        <td>{customer.phone || 'N/A'}</td>
-                                                        <td>{customer.city || 'N/A'}</td>
-                                                        <td>{customer.state || 'N/A'}</td>
-                                                        <td>{customer.zip_code || 'N/A'}</td>
+
+                                    {loading ? (
+                                        <p>Loading...</p>
+                                    ) : error ? (
+                                        <p className="text-danger">{error}</p>
+                                    ) : (
+                                        <div className="table-responsive">
+                                            <Table bordered striped hover className="mb-0">
+                                                <caption>List of Customers</caption>
+                                                <thead>
+                                                    <tr>
+                                                        <th>#</th>
+                                                        <th>Name</th>
+                                                        <th>Action</th>
                                                     </tr>
-                                                ))
-                                            ) : (
-                                                <tr>
-                                                    <td colSpan="9" className="text-center">No data available</td>
-                                                </tr>
-                                            )}
-                                        </tbody>
-                                    </Table>
-                                    <div className="d-flex justify-content-between mt-3">
-                                        <Button disabled={!prevPage} onClick={() => fetchData(prevPage)}>Previous</Button>
-                                        <Button disabled={!nextPage} onClick={() => fetchData(nextPage)}>Next</Button>
-                                    </div>
+                                                </thead>
+                                                <tbody>
+                                                    {filteredData.map((customer, index) => (
+                                                        <tr key={customer.id}>
+                                                            <th scope="row">{index + 1}</th>
+                                                            <td>{customer.name}</td>
+                                                            <td>
+                                                                <Dropdown>
+                                                                    <Dropdown.Toggle variant="secondary" size="sm" id={`dropdown-${customer.id}`}>
+                                                                        Actions
+                                                                    </Dropdown.Toggle>
+                                                                    <Dropdown.Menu>
+                                                                        <Dropdown.Item onClick={() => handleUpdate(customer.id)}>
+                                                                            Update
+                                                                        </Dropdown.Item>
+                                                                        <Dropdown.Item onClick={() => handleAddress(customer.id)}>
+                                                                            Address
+                                                                        </Dropdown.Item>
+                                                                        <Dropdown.Item onClick={() => handleLedger(customer.id)}>
+                                                                            Ledger
+                                                                        </Dropdown.Item>
+                                                                    </Dropdown.Menu>
+                                                                </Dropdown>
+                                                            </td>
+                                                        </tr>
+                                                    ))}
+                                                </tbody>
+                                            </Table>
+                                        </div>
+                                    )}
                                 </CardBody>
                             </Card>
                         </Col>

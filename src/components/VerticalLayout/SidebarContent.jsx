@@ -14,7 +14,7 @@ import { withTranslation } from "react-i18next";
 import { useCallback } from "react";
 
 import { FaUsers } from 'react-icons/fa';
-import { FaUserTie } from "react-icons/fa";
+import { FaUserTie } from "react-icons/fa"; 
 
 
 
@@ -496,7 +496,7 @@ useEffect(() => {
                 </ul>
               </li>
             ) : null}
-            {role === 'ADMIN' || role === 'ACCOUNTS' || role === 'IT'  || role === 'warehouse admin' ? (
+            {role === 'ADMIN' || role === 'ACCOUNTS' || role === 'IT'  || role === 'Warehouse Admin' ? (
 
 
               <li>
@@ -515,7 +515,7 @@ useEffect(() => {
               </li>
 
             ) : null}
-            {role === 'ADMIN' || role === 'ACCOUNTS' || role === 'IT' || role === 'warehouse admin' ? (
+            {role === 'ADMIN' || role === 'ACCOUNTS' || role === 'IT' || role === 'Warehouse Admin' ? (
 
 
               <li>
@@ -538,7 +538,7 @@ useEffect(() => {
             ) : null}
 
 
-{role === 'ADMIN' || role === 'ACCOUNTS' || role === 'warehouse admin' ? (
+{role === 'ADMIN' || role === 'ACCOUNTS' || role === 'Warehouse Admin' ? (
 
 
 <li>

@@ -150,13 +150,13 @@ const AddProduct = ({ isOpen, toggle }) => {
                                                 <td>{index + 1}</td>
                                                 <td>
                                                     <img
-                                                        src={product.image}
+                                                        src={`${import.meta.env.VITE_APP_IMAGE}${product.image}`}
                                                         alt={product.name}
                                                         style={{ width: "50px", height: "50px", objectFit: "cover" }}
                                                     />
                                                 </td>
                                                 <td>{product.name}</td>
-                                                <td>${product.selling_price ? product.selling_price.toFixed(2) : "N/A"}</td>
+                                                <td>₹{product.selling_price ? product.selling_price.toFixed(2) : "N/A"}</td>
                                                 <td>{product.stock || 0}</td>
                                                 <td>
                                                     <Input

@@ -6,6 +6,8 @@ import * as Yup from 'yup';
 import { useFormik } from "formik";
 import React, { useState, useEffect } from "react";
 import Select from 'react-select';
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 // Import Breadcrumb
 import Breadcrumbs from "../../components/Common/Breadcrumb";
@@ -142,11 +144,31 @@ const FormLayouts = () => {
         
                 if (response.status === 201) {
                     setSuccess("Form submitted successfully");
+                    toast.success("user added success !", {
+                        position: "top-right",
+                        autoClose: 4000, 
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        draggable: true,
+                        progress: undefined,
+                        theme: "colored",
+                      });
                     console.log("Form submitted successfully", response);
                     resetForm(); // Clear the form
                     setTimeout(() => setSuccess(null), 3000);
                 } else {
                     setError("Failed to submit the form");
+                    toast.error("failed to submit the order !", {
+                        position: "top-right",
+                        autoClose: 4000, // Auto close after 3 seconds
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        draggable: true,
+                        progress: undefined,
+                        theme: "colored",
+                      });
                     setTimeout(() => setError(null), 3000); 
                     console.log("error", response);
                 }
@@ -934,6 +956,7 @@ const FormLayouts = () => {
                         </Col>
                     </Row>
                 </Container>
+                <ToastContainer/>
             </div>
         </React.Fragment>
     );
