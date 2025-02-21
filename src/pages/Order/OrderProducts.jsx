@@ -426,7 +426,7 @@ const FormLayouts = () => {
 
     const handleDownloadInvoice = () =>{
 
-        const pdfUrl = `https://inbox-archived-sick-associate.trycloudflare.com/invoice/${id}/`;
+        const pdfUrl = `${import.meta.env.VITE_APP_IMAGE}/invoice/${id}/`;
         window.open(pdfUrl, "_blank");
  
     }
@@ -739,7 +739,7 @@ const FormLayouts = () => {
                                 <Col xl={12}>
                                     <Card className="bordered-card">
                                         <CardBody>
-                                            <CardTitle className="h4">Bordered Table</CardTitle>
+                                            <CardTitle className="h4">Order table</CardTitle>
                                             <div className="table-responsive">
                                                 <Table className="table table-bordered table-striped mb-0">
                                                     <thead>
@@ -764,7 +764,7 @@ const FormLayouts = () => {
                                                                 <td>{index + 1}</td>
                                                                 <td className="image-cell">
                                                                     <img
-                                                                        src={`${item.image}`}
+                                                                        src={`${import.meta.env.VITE_APP_IMAGE}/${item.image}`}
                                                                         alt={item.name}
                                                                         style={{
                                                                             width: '50px',

@@ -50,38 +50,40 @@ const FormLayouts = () => {
     const formik = useFormik({
         initialValues: {
             state: "",
-            check: "",
             company: "BEPOSITIVERACING PVT LTD",
             family: "",
             customer: "",
             manage_staff: "",
             billing_address: "",
-            payment_status: "",
-            payment_method: "",
-            bank: "",
             total_amount: 0,
             order_date: new Date().toISOString().substring(0, 10),
-            warehouses:"",
+            warehouses_obj:"",
 
         },
         validationSchema: Yup.object({
             state: Yup.string().required("This field is required"),
-            check: Yup.string().required("This field is required"),
             company: Yup.string().required("Company selection is required"),
             family: Yup.string().required("This field is required"),
             customer: Yup.string().required("This field is required"),
             manage_staff: Yup.string().required("This field is required"),
             billing_address: Yup.string().required("Shipping address selection is required"),
-            payment_status: Yup.string().required("Payment status is required"),
-            payment_method: Yup.string().required("Payment method is required"),
-            bank: Yup.string().required("Bank selection is required"),
+            // payment_status: Yup.string().required("Payment status is required"),
+            // payment_method: Yup.string().required("Payment method is required"),
+            // bank: Yup.string().required("Bank selection is required"),
         }),
         onSubmit: async (values) => {
             console.log("Submitted values:", values); // Log form data to console
         
+            // Ensure finalAmount is correctly updated before submission
+            const updatedTotalAmount = cartProducts.reduce((acc, product) => {
+                const productTotal = (product.price || 0) * (product.quantity || 1);
+                const productDiscount = (product.discount || 0) * (product.quantity || 1);
+                return acc + (productTotal - productDiscount);
+            }, 0);
+        
             const dataToSubmit = {
                 ...values,
-                total_amount: finalAmount.toFixed(2)  // Pass the finalAmount here
+                total_amount: updatedTotalAmount.toFixed(2),  // Ensure correct value is used
             };
         
             try {
@@ -93,7 +95,7 @@ const FormLayouts = () => {
         
                 if (response.status === 201) {
                     console.log("Data saved successfully:", response.data);
-                    toast.success("performa invoice created success !", {
+                    toast.success("Performa invoice created successfully!", {
                         position: "top-right",
                         autoClose: 4000,
                         hideProgressBar: false,
@@ -102,12 +104,12 @@ const FormLayouts = () => {
                         draggable: true,
                         progress: undefined,
                         theme: "colored",
-                      });
+                    });
                     formik.resetForm();
                 }
             } catch (error) {
                 console.error("Error saving data:", error);
-                toast.error("error creating performa invoicess !", {
+                toast.error("Error creating Performa invoice!", {
                     position: "top-right",
                     autoClose: 4000,
                     hideProgressBar: false,
@@ -116,10 +118,11 @@ const FormLayouts = () => {
                     draggable: true,
                     progress: undefined,
                     theme: "colored",
-                  });
+                });
                 setError((prevError) => ({ ...prevError, submitError: "Failed to save data" }));
             }
         }
+        
     });
 
 
@@ -312,17 +315,43 @@ const FormLayouts = () => {
 
     const handleDiscountChange = (index, newDiscount) => {
         const updatedCartProducts = [...cartProducts];
-        updatedCartProducts[index].discount = parseFloat(newDiscount);
+        updatedCartProducts[index].discount = parseFloat(newDiscount) || 0;
         setCartProducts(updatedCartProducts);
         updateCartProduct(updatedCartProducts[index].id, { discount: newDiscount });
+    
+        // Update Net Amount dynamically
+        updateCartTotal(updatedCartProducts);
     };
-
+    
     const handleQuantityChange = (index, newQuantity) => {
         const updatedCartProducts = [...cartProducts];
-        updatedCartProducts[index].quantity = parseInt(newQuantity, 10);
+        updatedCartProducts[index].quantity = parseInt(newQuantity, 10) || 1;
         setCartProducts(updatedCartProducts);
         updateCartProduct(updatedCartProducts[index].id, { quantity: newQuantity });
+    
+        // Update Net Amount dynamically
+        updateCartTotal(updatedCartProducts);
     };
+
+
+    const updateCartTotal = (updatedProducts) => {
+        let totalAmount = 0;
+        let totalDiscount = 0;
+    
+        updatedProducts.forEach(product => {
+            const productTotal = (product.price || 0) * (product.quantity || 1);
+            const productDiscount = (product.discount || 0) * (product.quantity || 1);
+            
+            totalAmount += productTotal;
+            totalDiscount += productDiscount;
+        });
+    
+        setCartTotalAmount(totalAmount);
+        setCartTotalDiscount(totalDiscount);
+        setFinalAmount(totalAmount - totalDiscount);
+    };
+    
+    
 
     const handleRemoveProduct = async (productId) => {
         try {
@@ -386,7 +415,7 @@ const FormLayouts = () => {
                                                     >
                                                         <option value="" disabled>Select a company</option>
                                                         {companys.map((company, index) => (
-                                                            <option key={index} value={company.id}>
+                                                            <option key={index} value={company.name}>
                                                                 {company.name}
                                                             </option>
                                                         ))}
@@ -558,13 +587,13 @@ const FormLayouts = () => {
                                           <div className="mb-3">
                                                        <Label htmlFor="formrow-unit-Input">choose warehouse</Label>
                                                        <select
-                                                           name="warehouses"
+                                                           name="warehouses_obj"
                                                            id="formrow-unit-Input"
                                                            className="form-control"
-                                                           value={formik.values.warehouses}
+                                                           value={formik.values.warehouses_obj}
                                                            onChange={formik.handleChange}
                                                            onBlur={formik.handleBlur}
-                                                           invalid={formik.touched.warehouses && formik.errors.warehouses}
+                                                           invalid={formik.touched.warehouses_obj && formik.errors.warehouses_obj}
                                                        >
                                                            <option value="">Choose...</option>
                                                            {warehouseDetails.map((unit) => (
@@ -576,29 +605,6 @@ const FormLayouts = () => {
                                                        )}
                                                    </div>                                                                       </Col>
                                         </Row>
-
-                                        <div className="mb-3">
-                                            <div className="form-check">
-                                                <Input
-                                                    type="checkbox"
-                                                    className="form-check-input"
-                                                    id="formrow-customCheck"
-                                                    name="check"
-                                                    value={formik.values.check}
-                                                    onChange={formik.handleChange}
-                                                    onBlur={formik.handleBlur}
-                                                    invalid={formik.touched.check && formik.errors.check ? true : false}
-                                                />
-                                                <Label className="form-check-label" htmlFor="formrow-customCheck">
-                                                    Check me out
-                                                </Label>
-                                            </div>
-                                            {formik.errors.check && formik.touched.check ? (
-                                                <FormFeedback type="invalid">{formik.errors.check}</FormFeedback>
-                                            ) : null}
-                                        </div>
-
-
                                         <div className="mb-3">
                                             <Button color="primary" onClick={toggleModal}>
                                                 ADD PRODUCTS
@@ -637,7 +643,7 @@ const FormLayouts = () => {
                                                                                     <td>{index + 1}</td>
                                                                                     <td>
                                                                                         <img
-                                                                                            src={product.image}
+                                                                                            src={`${import.meta.env.VITE_APP_IMAGE}/${product.image}`}
                                                                                             alt={product.name || "Product image"}
                                                                                             style={{ width: "50px", height: "50px" }}
                                                                                         />
@@ -715,7 +721,7 @@ const FormLayouts = () => {
                                             <Row className="mt-4">
 
                                                 <Col md={6}>
-                                                    <Card className="mb-3">
+                                                    {/* <Card className="mb-3">
                                                         <CardBody>
                                                             <Label for="payment_status">Payment Status *</Label>
                                                             <Input
@@ -780,7 +786,7 @@ const FormLayouts = () => {
                                                                 <FormFeedback>{formik.errors.payment_method}</FormFeedback>
                                                             ) : null}
                                                         </CardBody>
-                                                    </Card>
+                                                    </Card> */}
                                                 </Col>
 
 

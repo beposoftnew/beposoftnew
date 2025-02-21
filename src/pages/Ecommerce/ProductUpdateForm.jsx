@@ -469,39 +469,51 @@ const EcommerenceAddProduct = () => {
                                             </Col>
 
 
-
                                             <Col lg={3}>
-                                                <div className="mb-3">
-                                                    <Label htmlFor="formrow-InputImage">Upload Image</Label>
-                                                    <Input
-                                                        type="file"
-                                                        name="image"
-                                                        className={`form-control ${formik.touched.image && formik.errors.image ? 'is-invalid' : ''}`}
-                                                        id="formrow-InputImage"
-                                                        onChange={(event) => {
-                                                            const file = event.currentTarget.files[0];
-                                                            if (file) {
-                                                                formik.setFieldValue("image", file);
-                                                                const reader = new FileReader();
-                                                                reader.onloadend = () => {
-                                                                    setImagePreview(reader.result);
-                                                                };
-                                                                reader.readAsDataURL(file);
-                                                            }
-                                                        }}
-                                                        onBlur={formik.handleBlur}
-                                                        accept="image/*"
-                                                    />
-                                                    {formik.errors.image && formik.touched.image && (
-                                                        <FormFeedback className="d-block">{formik.errors.image}</FormFeedback>
-                                                    )}
-                                                </div>
-                                                {imagePreview && (
-                                                    <div className="image-preview">
-                                                        <img src={imagePreview} alt="Preview" style={{ width: '50%', height: 'auto' }} />
-                                                    </div>
-                                                )}
-                                            </Col>
+    <div className="mb-3">
+        <Label htmlFor="formrow-InputImage">Upload Image</Label>
+        <Input
+            type="file"
+            name="image"
+            className={`form-control ${formik.touched.image && formik.errors.image ? 'is-invalid' : ''}`}
+            id="formrow-InputImage"
+            onChange={(event) => {
+                const file = event.currentTarget.files[0];
+
+                if (file) {
+                    formik.setFieldValue("image", file);
+
+                    // Ensure FileReader reads the image correctly
+                    const reader = new FileReader();
+                    reader.onload = () => {
+                        setImagePreview(reader.result); // Set preview image
+                    };
+                    reader.onerror = (error) => {
+                        console.error("Error reading file:", error);
+                    };
+                    reader.readAsDataURL(file);
+                }
+            }}
+            onBlur={formik.handleBlur}
+            accept="image/*"
+        />
+        {formik.errors.image && formik.touched.image && (
+            <FormFeedback className="d-block">{formik.errors.image}</FormFeedback>
+        )}
+    </div>
+
+    {/* Display Image Preview */}
+    {imagePreview && (
+        <div className="image-preview mt-2">
+            <img 
+                src={imagePreview}  // Directly use the base64 preview
+                alt="Preview" 
+                style={{ width: '50%', height: 'auto', borderRadius: '5px', border: '1px solid #ddd', padding: '5px' }} 
+            />
+        </div>
+    )}
+</Col>
+
                                         </Row>
                                         <div className="d-flex flex-wrap gap-2">
                                             <Button type="submit" color="primary">Save Changes</Button>

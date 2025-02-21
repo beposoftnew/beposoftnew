@@ -43,7 +43,6 @@ const FormLayouts = () => {
             name: Yup.string().required("This field is required"),
             email: Yup.string().email("Invalid email format").required("Please enter email"),
             phone: Yup.string().required("Please enter phone"),
-            gst: Yup.string().required("Please enter GST number"),
             address: Yup.string().required("Please enter address"),
             zip_code: Yup.string().required("ZIP code required"),
             manager: Yup.string().required("Please select a manager"),

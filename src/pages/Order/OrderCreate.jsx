@@ -74,10 +74,10 @@ const FormLayouts = () => {
             bank: Yup.string().required("Bank selection is required"),
             status: Yup.string().required("this field is required"),
         }),
-        onSubmit: async (values) => {
+        onSubmit: async (values, { resetForm }) => {
             const payload = {
                 ...values,
-                total_amount: finalAmount, // Override with the current value
+                total_amount: finalAmount, // Ensure total amount is correctly passed
             };
         
             try {
@@ -89,17 +89,24 @@ const FormLayouts = () => {
         
                 if (response.status === 201) {
                     console.log("Data saved successfully:", response.data);
-                    formik.resetForm();
-                    toast.success("order create success !", {
+        
+                    // Reset form fields after successful submission
+                    resetForm();
+                    setCartProducts([]); // Clear cart products
+                    setCartTotalAmount(0);
+                    setCartTotalDiscount(0);
+                    setFinalAmount(0);
+        
+                    toast.success("Order created successfully!", {
                         position: "top-right",
-                        autoClose: 4000, // Auto close after 3 seconds
+                        autoClose: 4000,
                         hideProgressBar: false,
                         closeOnClick: true,
                         pauseOnHover: true,
                         draggable: true,
                         progress: undefined,
                         theme: "colored",
-                      });
+                    });
                 }
             } catch (error) {
                 console.error("Error saving data:", error);
@@ -109,6 +116,7 @@ const FormLayouts = () => {
                 }));
             }
         },
+        
     });
 
     const orderMode =[

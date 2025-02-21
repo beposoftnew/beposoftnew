@@ -64,12 +64,13 @@
                 warehouse: Yup.string().required("This field is required"),
             }),
        
-            onSubmit: async (values) => {
+            onSubmit: async (values, { resetForm }) => {
                 const payload = {
                     ...values,
-                    type: values.type || "variant" 
+                    type: values.type || "variant"
                 };
-                console.log("Final Payload to Backend:", payload);  
+                console.log("Final Payload to Backend:", payload);
+                
                 try {
                     const response = await axios.post(`${import.meta.env.VITE_APP_KEY}add/product/`, payload, {
                         headers: {
@@ -77,13 +78,17 @@
                             "Content-Type": "application/json"
                         }
                     });
+                    
                     setSuccessMessage("Form submitted successfully!");
                     console.log('Form submitted successfully:', response.data);
+                    
+                    resetForm(); // **Clears the form after successful submission**
                 } catch (error) {
                     setErrorMessage("Error submitting form. Please try again.");
                     console.error('Error submitting form:', error);
                 }
             }
+            
             
         
         });

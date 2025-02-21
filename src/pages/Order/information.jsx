@@ -3,6 +3,7 @@ import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { useParams } from "react-router-dom";
 import axios from 'axios';
+import { ToastContainer, toast } from 'react-toastify';
 import {
     Row,
     Col,
@@ -44,13 +45,21 @@ const UpdateInformationPage = () => {
                     }
                 );
                 console.log("Form submitted successfully:", response.data);
-                // Optionally, display a success message or reset the form
+                toast.success("Order updated successfully!");
+                
             } catch (error) {
                 console.error("Error submitting form:", error);
+                toast.error("Error updating order!");
                 // Optionally, handle the error or display an error message
             }
         },        
     });
+
+
+    useEffect(() =>{
+
+        console.log("toast success",);
+    },[])
 
     useEffect(() => {
         const fetchOrderAndCustomerData = async () => {
@@ -177,6 +186,7 @@ const UpdateInformationPage = () => {
                             </div>
                         </Form>
                     </CardBody>
+                    <ToastContainer />
                 </Card>
             </Col>
         </Row>

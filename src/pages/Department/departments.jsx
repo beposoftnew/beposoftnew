@@ -167,7 +167,7 @@ const DepartmentTable = () => {
 
         fetchData();
     }, [token]);
-
+    
     document.title = "States | Beposoft";
 
     return (
@@ -200,7 +200,7 @@ const DepartmentTable = () => {
                 {/* Modal for adding/editing state */}
                 <Modal isOpen={modal} toggle={toggleModal}>
                     <ModalHeader toggle={toggleModal}>
-                        {isAddMode ? "Add New State" : "Edit State"}
+                        {isAddMode ? "add new department" : "edit existing department"}
                     </ModalHeader>
                     <ModalBody>
                         <Form>

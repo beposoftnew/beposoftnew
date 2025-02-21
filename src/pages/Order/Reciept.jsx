@@ -83,12 +83,12 @@ const ReceiptFormPage = ({ toggleReciptModal }) => {
                 toggleReciptModal();  // Close the modal on success
 
                 // Navigate to another page (e.g., order details page)
-                navigate(`/order/${id}/details`, {
-                    state: {
-                        updatedOrderItems,  // Pass the updated order items as state
-                        receiptDetails: response.data // Pass the receipt details if needed
-                    }
-                });
+                // navigate(`/order/${id}/details`, {
+                //     state: {
+                //         updatedOrderItems,  // Pass the updated order items as state
+                //         receiptDetails: response.data // Pass the receipt details if needed
+                //     }
+                // });
             } else {
                 throw new Error('Unexpected response status');
             }

@@ -237,13 +237,13 @@ const BasicTable = () => {
                                                                                     Delete
                                                                                 </UncontrolledTooltip>
                                                                             </DropdownItem>
-                                                                            <DropdownItem onClick={() => handleViewProduct(product.id, product.type)}>
+                                                                            {/* <DropdownItem onClick={() => handleViewProduct(product.id, product.type)}>
                                                                                 <i className="mdi mdi-eye font-size-16 text-info me-1" id={`viewtooltip-${product.id}`}></i>
                                                                                 View
                                                                                 <UncontrolledTooltip placement="top" target={`viewtooltip-${product.id}`}>
                                                                                     View Product
                                                                                 </UncontrolledTooltip>
-                                                                            </DropdownItem>
+                                                                            </DropdownItem> */}
                                                                         </DropdownMenu>
                                                                     </UncontrolledDropdown>
                                                                 </td>

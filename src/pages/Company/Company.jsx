@@ -57,8 +57,20 @@ const CompanyForm = () => {
                     resetForm();
                 })
                 .catch((error) => {
-                    setErrorMessage(error.response?.data?.message || "There was an error submitting the form.");
+                    console.error("Error submitting form:", error);
+                    
+                    let errorMsg = "There was an error submitting the form."; // Default message
+                
+                    if (error.response?.data?.message) {
+                        // Check if message is an object and convert it to a string
+                        errorMsg = typeof error.response.data.message === "string" 
+                            ? error.response.data.message 
+                            : JSON.stringify(error.response.data.message); // Convert object to string
+                    }
+                
+                    setErrorMessage(errorMsg); // Ensure errorMessage is always a string
                 })
+                
                 .finally(() => {
                     setLoading(false);
                 });

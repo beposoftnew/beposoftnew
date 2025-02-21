@@ -471,8 +471,7 @@ const authProtectedRoutes = [
 
   //   //Ecommerce
   {
-    path: "/ecommerce-product-detail/:id/:type/",
-    component: <EcommerceProductDetail />,
+    path: "/ecommerce-product-detail/:id/:type/",component: <EcommerceProductDetail />,
   },
   { path: "/ecommerce-products", component: <ProductTableData /> },
   { path: "/ecommerce-product-variant/:id/:type/", component: <EcommerceProductVariant /> },

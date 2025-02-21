@@ -110,25 +110,19 @@ const FormLayouts = () => {
             check: Yup.string().required("This field is required"),
         }),
 
-        onSubmit: async (values) => {
+        onSubmit: async (values, { resetForm }) => {
             try {
                 console.log("Formik Values Before Submission:", values);
                 const formData = new FormData();
         
-                // Append each value, including allocated_states
                 for (let key in values) {
                     if (key === "signatur_up" && values[key]) {
-                        formData.append(key, values[key]); // Append the file
+                        formData.append(key, values[key]); 
                     } else if (key === "allocated_states") {
-                        values[key].forEach(state => formData.append('allocated_states', state)); // Append each state individually
+                        values[key].forEach(state => formData.append('allocated_states', state)); 
                     } else if (values[key] !== '') {
-                        formData.append(key, values[key]); // Append non-empty values
+                        formData.append(key, values[key]);
                     }
-                }
-        
-                // Log FormData entries
-                for (let pair of formData.entries()) {
-                    console.log(`${pair[0]}: ${pair[1]}`);
                 }
         
                 const response = await axios.post(
@@ -137,62 +131,42 @@ const FormLayouts = () => {
                     {
                         headers: {
                             Authorization: `Bearer ${token}`,
-                            // Do not set 'Content-Type' here; let Axios handle it
                         }
                     }
                 );
         
                 if (response.status === 201) {
                     setSuccess("Form submitted successfully");
-                    toast.success("user added success !", {
+                    toast.success("User added successfully!", {
                         position: "top-right",
-                        autoClose: 4000, 
+                        autoClose: 4000,
                         hideProgressBar: false,
                         closeOnClick: true,
                         pauseOnHover: true,
                         draggable: true,
                         progress: undefined,
                         theme: "colored",
-                      });
-                    console.log("Form submitted successfully", response);
-                    resetForm(); // Clear the form
-                    setTimeout(() => setSuccess(null), 3000);
+                    });
+        
+                    resetForm(); // **Clears the form fields after submission**
                 } else {
                     setError("Failed to submit the form");
-                    toast.error("failed to submit the order !", {
+                    toast.error("Failed to submit the order!", {
                         position: "top-right",
-                        autoClose: 4000, // Auto close after 3 seconds
+                        autoClose: 4000,
                         hideProgressBar: false,
                         closeOnClick: true,
                         pauseOnHover: true,
                         draggable: true,
                         progress: undefined,
                         theme: "colored",
-                      });
-                    setTimeout(() => setError(null), 3000); 
-                    console.log("error", response);
+                    });
                 }
-        
             } catch (err) {
-                if (err.response && err.response.data && err.response.data.errors) {
-                    const backendErrors = err.response.data.errors;
-                    // Display specific backend validation errors
-                    if (backendErrors.email) {
-                        formik.setFieldError('email', backendErrors.email[0]);
-                    }
-                    if (backendErrors.phone) {
-                        formik.setFieldError('phone', backendErrors.phone[0]);
-                    }
-                    if (backendErrors.username) {
-                        formik.setFieldError('username', backendErrors.username[0]);
-                    }
-                    // Handle other fields as necessary
-                } else {
-                    // setError("An error occurred. Please try again.", err);
-                    console.log("erro", err)
-                }
+                console.log("Error:", err);
             }
         }
+        
         
 
     });

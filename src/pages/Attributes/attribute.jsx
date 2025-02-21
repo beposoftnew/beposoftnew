@@ -143,7 +143,7 @@ const BasicTable = () => {
                                                         attributes.map((attribute, index) => (
                                                             <tr key={index}>
                                                                 <td>{index + 1}</td>
-                                                                <td>{attribute.name || "Unnamed Attribute"}</td>
+                                                                <td>{attribute.name || ""}</td>
                                                                 <td>
                                                                     <Button
                                                                         color="info"

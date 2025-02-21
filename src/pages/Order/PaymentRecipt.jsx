@@ -222,7 +222,7 @@ console.log("formated dataaaaaaa", boxDetails)
                 <Modal isOpen={isOpen} toggle={toggleModal} size="lg">
                     <ModalHeader toggle={toggleModal}>Receipt Against Invoice Generate</ModalHeader>
                     <ModalBody>
-                        <Receipt handleSubmit={handleSubmit} isSubmitting={isSubmitting} />
+                        <Receipt handleSubmit={handleSubmit} isSubmitting={isSubmitting}toggleReciptModal={toggleModal} />
                     </ModalBody>
                 </Modal>
 

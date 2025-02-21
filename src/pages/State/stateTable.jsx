@@ -114,34 +114,38 @@ const StateTable = () => {
         }
     };
 
-    const handleSubmit = async () => {
-        if (isAddMode) {
-            // Handle Add State
-            try {
-                const response = await axios.post(`${import.meta.env.VITE_APP_KEY}add/state/`, newState, {
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
-                setData([...data, response.data]); // Add new state to table data
+const handleSubmit = async () => {
+    if (isAddMode) {
+        try {
+            const response = await axios.post(`${import.meta.env.VITE_APP_KEY}add/state/`, newState, {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+
+            if (response.status === 201 || response.status === 200) {
+                setData(prevData => [...prevData, response.data]); // Update state using functional approach
                 toggleModal();
-            } catch (error) {
-                console.error("Add state failed:", error);
-                setError(error.message || "Failed to add state");
+            } else {
+                throw new Error("Failed to add state");
             }
-        } else {
-            // Handle Update State
-            try {
-                const response = await axios.put(`${import.meta.env.VITE_APP_KEY}state/update/${selectedCustomer.id}/`, selectedCustomer, {
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
-                // Update the specific state entry
-                setData(data.map(customer => customer.id === selectedCustomer.id ? response.data : customer));
-                toggleModal();
-            } catch (error) {
-                console.error("Update failed:", error);
-                setError(error.message || "Failed to update customer");
-            }
+        } catch (error) {
+            console.error("Add state failed:", error);
+            setError(error.message || "Failed to add state");
         }
-    };
+    } else {
+        // Handle Update State
+        try {
+            const response = await axios.put(`${import.meta.env.VITE_APP_KEY}state/update/${selectedCustomer.id}/`, selectedCustomer, {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+
+            setData(prevData => prevData.map(item => item.id === selectedCustomer.id ? response.data : item));
+            toggleModal();
+        } catch (error) {
+            console.error("Update failed:", error);
+            setError(error.message || "Failed to update customer");
+        }
+    }
+};
 
     const handleAddState = () => {
         setIsAddMode(true);
