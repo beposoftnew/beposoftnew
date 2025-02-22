@@ -228,7 +228,7 @@ useEffect(() => {
 
 
 
-            {role === 'SAlES' ? (
+            {role === 'BDO' ? (
               <li>
                 <Link to="/#" className="has-arrow">
                   <FaUserTie size={17} style={{ marginRight: '6px' }} />
@@ -257,9 +257,6 @@ useEffect(() => {
                   </li>
                   <li>
                     <Link to="/add/staff/customer/">{props.t("Add Customers")}</Link>
-                  </li>
-                  <li>
-                    <Link to="/customers/beposoft">{props.t("bulk customer upload")}</Link>
                   </li>
                 </ul>
               </li>

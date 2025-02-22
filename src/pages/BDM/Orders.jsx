@@ -213,7 +213,7 @@ const BasicTable = () => {
                                                         <tr key={order.id}>
                                                             <th scope="row">{index + 1}</th>
                                                             <td>
-                                                                <Link to={`/order/${order.id}/items/`}>
+                                                                <Link to={`/order/${order.id}/stafforder/`}>
                                                                     {order.invoice}
                                                                 </Link>
                                                             </td>

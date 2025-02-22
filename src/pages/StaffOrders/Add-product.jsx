@@ -80,11 +80,19 @@ const AddProduct = ({ isOpen, toggle }) => {
     };
 
     const addToCart = async (product, variant = null) => {
+        const selectedQuantity = variant ? quantity[variant.id] || 1 : quantity[product.id] || 1;
+    
+        // Check if the entered quantity is greater than available stock
+        if (selectedQuantity > product.stock) {
+            alert("Entered quantity is greater than available stock.");
+            return;
+        }
+    
         const cartItem = {
             product: product.id,
-            quantity: variant ? quantity[variant.id] || 1 : quantity[product.id] || 1,
+            quantity: selectedQuantity,
         };
-
+    
         try {
             const response = await axios.post(
                 `${import.meta.env.VITE_APP_KEY}cart/product/`,
@@ -96,7 +104,7 @@ const AddProduct = ({ isOpen, toggle }) => {
                     },
                 }
             );
-
+    
             if (response.status === 201) {
                 alert("Product added to cart successfully!");
             }
@@ -104,6 +112,7 @@ const AddProduct = ({ isOpen, toggle }) => {
             console.error("Failed to add product to cart", error);
         }
     };
+    
 
     // Filter products based on the search query
     const filteredProducts = Array.isArray(products) ? products.filter((product) => product.name.toLowerCase().includes(searchQuery.toLowerCase())) : [];

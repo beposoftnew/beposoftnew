@@ -273,7 +273,7 @@ const AddProduct = ({ isOpen, toggle, onSelectProduct, onCartUpdate }) => {
                                                                             <td>
                                                                                 <img
                                                                                     src={variant.variant_images && variant.variant_images.length > 0
-                                                                                        ? `http://localhost:8000${variant.variant_images[0].image}`
+                                                                                        ? `${import.meta.env.VITE_APP_IMAGE}${variant.variant_images[0].image}`
                                                                                         : "https://via.placeholder.com/50"
                                                                                     }
                                                                                     alt={variant.name}

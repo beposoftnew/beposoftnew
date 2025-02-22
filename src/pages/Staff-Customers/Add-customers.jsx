@@ -5,6 +5,7 @@ import {
 import * as Yup from 'yup';
 import { useFormik } from "formik";
 import React, { useState, useEffect } from "react";
+import { toast, ToastContainer } from 'react-toastify';
 
 // Import Breadcrumb
 import Breadcrumbs from "../../components/Common/Breadcrumb";
@@ -37,19 +38,17 @@ const FormLayouts = () => {
             manager: "",
             city: "",
             commend: "",
-            check: "",
+
         },
         validationSchema: Yup.object({
             name: Yup.string().required("This field is required"),
             email: Yup.string().email("Invalid email format").required("Please enter email"),
             phone: Yup.string().required("Please enter phone"),
-            gst: Yup.string().required("Please enter GST number"),
             address: Yup.string().required("Please enter address"),
             zip_code: Yup.string().required("ZIP code required"),
             manager: Yup.string().required('Manager is required').nullable(),
             city: Yup.string().required("City is required"),
             state: Yup.string().required("State is required"),
-            check: Yup.boolean().required("You must check this box"),
         }),
 
         onSubmit: async (values) => {
@@ -64,7 +63,7 @@ const FormLayouts = () => {
                 });
 
                 if (response.status === 201) {
-                    setSuccess("Customer added successfully!");
+                    toast.success("Customer added successfully");
                     formik.resetForm();
                 }
             } catch (err) {
@@ -98,16 +97,40 @@ const FormLayouts = () => {
                         axios.get(`${import.meta.env.VITE_APP_KEY}states/`, { headers: { Authorization: `Bearer ${token}` } }),
                         axios.get(`${import.meta.env.VITE_APP_KEY}staffs/`, { headers: { Authorization: `Bearer ${token}` } })
                     ]);
-
+    
+                    let formattedStates = [];
                     if (statesResponse.status === 200) {
-                        const formattedStates = statesResponse.data.data
-                        setStates(formattedStates);
+                        formattedStates = statesResponse.data.data;
                     } else {
                         throw new Error(`HTTP error! Status: ${statesResponse.status}`);
                     }
-
+    
                     if (ManagedResponse.status === 200) {
-                        setStaffs(ManagedResponse.data.data);
+                        let loggedInStaffId;
+                        try {
+                            const tokenPayload = JSON.parse(window.atob(token.split('.')[1]));
+                            loggedInStaffId = tokenPayload.id;
+                        } catch (error) {
+                            console.error("Error parsing token", error);
+                        }
+                        const filteredStaffs = ManagedResponse.data.data.filter(
+                            (staff) => staff.id === loggedInStaffId
+                        );
+                        setStaffs(filteredStaffs);
+    
+                        if (filteredStaffs.length > 0) {
+                            formik.setFieldValue("manager", filteredStaffs[0].id);
+                            // Filter states based on allocated_states property of the logged-in staff
+                            if (filteredStaffs[0].allocated_states && Array.isArray(filteredStaffs[0].allocated_states)) {
+                                const allocatedStateIds = filteredStaffs[0].allocated_states;
+                                const allocatedStates = formattedStates.filter((stat) =>
+                                    allocatedStateIds.includes(stat.id)
+                                );
+                                setStates(allocatedStates);
+                            } else {
+                                setStates([]);
+                            }
+                        }
                     } else {
                         throw new Error(`HTTP error! Status: ${ManagedResponse.status}`);
                     }
@@ -123,6 +146,11 @@ const FormLayouts = () => {
             setLoading(false);
         }
     }, [token]);
+    
+
+
+
+    console.log("staff information..:", staffs);
 
     return (
         <React.Fragment>
@@ -301,28 +329,25 @@ const FormLayouts = () => {
 
 
                                             <Col lg={4}>
-                                                <div className="mb-3">
-                                                    <Label htmlFor="manager">Managed User</Label>
-                                                    <select
-                                                        name="manager"
-                                                        id="supervisor_id"
-                                                        className={`form-control ${formik.errors.manager && formik.touched.manager ? 'is-invalid' : ''}`}
-                                                        value={formik.values.manager}
-                                                        onChange={formik.handleChange}
-                                                        onBlur={formik.handleBlur}
-                                                    >
-                                                        <option value="">Select Manager</option> {/* Default option */}
-                                                        {staffs.map((staff) => (
-                                                            <option key={staff.id} value={staff.id}>
-                                                                {staff.name}
-                                                            </option>
-                                                        ))}
-                                                    </select>
-                                                    {formik.errors.manager && formik.touched.manager && (
-                                                        <FormFeedback type="invalid">{formik.errors.manager}</FormFeedback>
-                                                    )}
-                                                </div>
-                                            </Col>
+                                            <div className="mb-3">
+                                                <Label htmlFor="manager">Managed User</Label>
+                                                {/* Display the staff name */}
+                                                <Input
+                                                    type="text"
+                                                    id="manager"
+                                                    className="form-control"
+                                                    value={staffs.length > 0 ? staffs[0].name : ""}
+                                                    readOnly
+                                                />
+                                                {/* Hidden input to pass the manager id on submit */}
+                                                <Input
+                                                    type="hidden"
+                                                    name="manager"
+                                                    value={formik.values.manager}
+                                                />
+                                            </div>
+                                        </Col>
+
 
 
                                             <Col md={6}>
@@ -426,33 +451,7 @@ const FormLayouts = () => {
 
                                         </Row>
 
-                                        <div className="mb-3">
-                                            <div className="form-check">
-                                                <Input
-                                                    type="checkbox"
-                                                    className="form-check-Input"
-                                                    id="formrow-customCheck"
-                                                    name="check"
-                                                    value={formik.values.check}
-                                                    onChange={formik.handleChange}
-                                                    onBlur={formik.handleBlur}
-                                                    invalid={
-                                                        formik.touched.check && formik.errors.check ? true : false
-                                                    }
-                                                />
-                                                <Label
-                                                    className="form-check-Label"
-                                                    htmlFor="formrow-customCheck"
-                                                >
-                                                    Check me out
-                                                </Label>
-                                            </div>
-                                            {
-                                                formik.errors.check && formik.touched.check ? (
-                                                    <FormFeedback type="invalid">{formik.errors.check}</FormFeedback>
-                                                ) : null
-                                            }
-                                        </div>
+                                    
                                         <div className="mb-3">
                                             <button type="submit" className="btn btn-primary w-md" disabled={loading}>
                                                 {loading ? 'Submitting...' : 'Submit'}
@@ -463,6 +462,7 @@ const FormLayouts = () => {
                             </Card>
                         </Col>
                     </Row>
+                    <ToastContainer />
                 </Container>
             </div>
         </React.Fragment>

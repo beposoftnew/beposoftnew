@@ -19,8 +19,22 @@ const ReceiptFormPage = () => {
         parcel_amount:"",
         postoffice_date:"",
  } )
- const [selectedBoxId, setSelectedBoxId] = useState(null); 
+ const [selectedBoxId, setSelectedBoxId] = useState(null);
+ const [isAddDisabled, setIsAddDisabled] = useState(false);
+ 
+ 
 
+
+ useEffect(() => {
+    const role = localStorage.getItem("active");
+    if (role === "BDM" || role === "BDO") {
+        setIsAddDisabled(true);
+    }
+}, []);
+
+
+
+console.log("is disabled", isAddDisabled);
 
 
 
@@ -211,6 +225,7 @@ console.log("formated dataaaaaaa", boxDetails)
                             className="btn btn-primary btn-sm mt-2"
                             onClick={toggleModal}
                             aria-label="Add new action"
+                            disabled={isAddDisabled}
                         >
                             Add
                         </button>

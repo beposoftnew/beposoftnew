@@ -8,6 +8,7 @@ import AddProduct from "./Add-product";
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
 import { Link } from "react-router-dom";
+import { toast, ToastContainer } from "react-toastify";
 
 const FormLayouts = () => {
     // Meta title
@@ -44,7 +45,6 @@ const FormLayouts = () => {
     const formik = useFormik({
         initialValues: {
             state: "",
-            check: "",
             company: "BEPOSITIVERACING PVT LTD",
             family: "",
             customer: "",
@@ -58,7 +58,6 @@ const FormLayouts = () => {
         },
         validationSchema: Yup.object({
             state: Yup.string().required("This field is required"),
-            check: Yup.string().required("This field is required"),
             company: Yup.string().required("Company selection is required"),
             family: Yup.string().required("This field is required"),
             customer: Yup.string().required("This field is required"),
@@ -83,6 +82,7 @@ const FormLayouts = () => {
         
                 if (response.status === 201) {
                     console.log("Data saved successfully:", response.data);
+                    toast.success("order created successfully");
                     formik.resetForm();
                 }
             } catch (error) {
@@ -144,7 +144,6 @@ const FormLayouts = () => {
                     if (StaffResponse.status === 200) {
                         const user = StaffResponse.data.data;
                         setLoggedUser(user);
-    
                         formik.setFieldValue("manage_staff", user.id || "");
                         formik.setFieldValue("family", user.family || "");
     
@@ -322,6 +321,10 @@ const FormLayouts = () => {
 
 
 
+    console.log("cart-products", cartProducts);
+
+
+
     return (
         <React.Fragment>
             <div className="page-content">
@@ -424,30 +427,25 @@ const FormLayouts = () => {
                                             </Col>
 
                                             <Col md={4}>
-                                                <div className="mb-3">
-                                                    <Label htmlFor="manage_staff">manage_staff</Label>
-                                                    <Input
-                                                        type="select"
-                                                        name="manage_staff"
-                                                        className="form-control"
-                                                        id="manage_staff"
-                                                        value={formik.values.manage_staff}
-                                                        onChange={formik.handleChange}
-                                                        onBlur={formik.handleBlur}
-                                                        invalid={formik.touched.manage_staff && formik.errors.manage_staff ? true : false}
-                                                    >
-                                                        <option value="">Select a manage_staff...</option>
-                                                        {staffs.map((staf) => (
-                                                            <option key={staf.id} value={staf.id}>
-                                                                {staf.name}
-                                                            </option>
-                                                        ))}
-                                                    </Input>
-                                                    {formik.errors.manage_staff && formik.touched.manage_staff ? (
-                                                        <FormFeedback type="invalid">{formik.errors.manage_staff}</FormFeedback>
-                                                    ) : null}
-                                                </div>
-                                            </Col>
+                                            <div className="mb-3">
+                                                <Label htmlFor="manage_staff">Manage Staff</Label>
+                                                {/* Display the logged-in staff name */}
+                                                <Input
+                                                    type="text"
+                                                    id="manage_staff"
+                                                    className="form-control"
+                                                    value={loggedUser ? loggedUser.name : ""}
+                                                    readOnly
+                                                />
+                                                {/* Hidden field to pass the staff id */}
+                                                <Input
+                                                    type="hidden"
+                                                    name="manage_staff"
+                                                    value={formik.values.manage_staff}
+                                                />
+                                            </div>
+                                        </Col>
+
                                         </Row>
 
                                         <Row>
@@ -519,27 +517,6 @@ const FormLayouts = () => {
                                             </Col>
                                         </Row>
 
-                                        <div className="mb-3">
-                                            <div className="form-check">
-                                                <Input
-                                                    type="checkbox"
-                                                    className="form-check-input"
-                                                    id="formrow-customCheck"
-                                                    name="check"
-                                                    value={formik.values.check}
-                                                    onChange={formik.handleChange}
-                                                    onBlur={formik.handleBlur}
-                                                    invalid={formik.touched.check && formik.errors.check ? true : false}
-                                                />
-                                                <Label className="form-check-label" htmlFor="formrow-customCheck">
-                                                    Check me out
-                                                </Label>
-                                            </div>
-                                            {formik.errors.check && formik.touched.check ? (
-                                                <FormFeedback type="invalid">{formik.errors.check}</FormFeedback>
-                                            ) : null}
-                                        </div>
-
 
                                         <div className="mb-3">
                                             <Button color="primary" onClick={toggleModal}>
@@ -579,13 +556,13 @@ const FormLayouts = () => {
                                                                                     <td>{index + 1}</td>
                                                                                     <td>
                                                                                         <img
-                                                                                            src={product.image}
+                                                                                            src={`${import.meta.env.VITE_APP_IMAGE}${product.image}`}
                                                                                             alt={product.name || "Product image"}
                                                                                             style={{ width: "50px", height: "50px" }}
                                                                                         />
                                                                                     </td>
                                                                                     <td>{product.name || "Unknown Product"}</td>
-                                                                                    <td>₹ {product.exclude_price || 0}</td>
+                                                                                    <td>₹ {Math.trunc(product.exclude_price )|| 0}</td>
                                                                                     <td>{product.tax || 0} %</td>
                                                                                     <td>
                                                                                         <Input
@@ -669,7 +646,7 @@ const FormLayouts = () => {
                                                                 invalid={formik.touched.payment_status && formik.errors.payment_status ? true : false}
                                                             >
                                                                 <option value="">Select</option>
-                                                                <option value="payed">Paid</option>
+                                                                <option value="paid">Paid</option>
                                                                 <option value="COD">COD</option>
                                                                 <option value="credit">Credit</option>
                                                             </Input>
@@ -708,13 +685,13 @@ const FormLayouts = () => {
                                                                 onBlur={formik.handleBlur}
                                                                 invalid={formik.touched.payment_method && formik.errors.payment_method ? true : false}
                                                             >
-                                                                <option value="">Select</option>
+                                                                 <option value="">Select</option>
                                                                 <option value="Credit Card">Credit Card</option>
                                                                 <option value="Debit Card">Debit Card</option>
-                                                                <option value="Net Banking">Net Banking</option>
-                                                                <option value="PayPal">PayPal</option>
-                                                                <option value="Razorpay">Razorpay</option>
-                                                                <option value="Cash on Delivery">Cash on Delivery</option>
+                                                                <option value="Net Banking'">Net Banking</option>
+                                                                <option value="PayPal'">PayPal</option>
+                                                                <option value="1 Razorpay">Razorpay</option>
+                                                                <option value="Cash on Delivery (COD)">Cash on Delivery</option>
                                                                 <option value="Bank Transfer">Bank Transfer</option>
                                                             </Input>
                                                             {formik.errors.payment_method && formik.touched.payment_method ? (
@@ -755,6 +732,7 @@ const FormLayouts = () => {
                             </Card>
                         </Col>
                     </Row>
+                    <ToastContainer/>
                 </Container>
             </div>
         </React.Fragment>

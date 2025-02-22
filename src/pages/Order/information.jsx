@@ -20,6 +20,7 @@ const UpdateInformationPage = () => {
     const token = localStorage.getItem("token");
     const { id } = useParams();
     const [customerAddresses, setCustomerAddresses] = useState([]);
+    const [statusOptions, setStatusOptions] = useState([]);
 
     const formik = useFormik({
         initialValues: {
@@ -54,6 +55,21 @@ const UpdateInformationPage = () => {
             }
         },        
     });
+
+    useEffect(() => {
+        const active = localStorage.getItem("active");
+        if (active === "BDO") {
+            setStatusOptions(["Invoice Approved"]);
+        } else {
+            setStatusOptions([
+                "Invoice Created",
+                "Invoice Approved",
+                "Waiting For Confirmation",
+                "To Print",
+                "Invoice Rejected"
+            ]);
+        }
+    }, []);
 
 
     useEffect(() =>{
@@ -106,31 +122,32 @@ const UpdateInformationPage = () => {
 
                         <Form onSubmit={formik.handleSubmit}>
                             <Row>
-                                <Col md={6}>
-                                    <div className="mb-3">
-                                        <Label htmlFor="formrow-status-select">STATUS</Label>
-                                        <Input
-                                            type="select"
-                                            name="status"
-                                            className="form-control"
-                                            id="formrow-status-select"
-                                            value={formik.values.status}
-                                            onChange={formik.handleChange}
-                                            onBlur={formik.handleBlur}
-                                            invalid={formik.touched.status && formik.errors.status}
-                                        >
-                                            <option value="">Select Status</option>
-                                            <option value="Invoice Created">Invoice Created</option>
-                                            <option value="Invoice Approved">Invoice Approved</option>
-                                            <option value="Waiting For Confirmation">Waiting For Confirmation</option>
-                                            <option value="To Print">To Print</option>
-                                            <option value="Invoice Rejected">Invoice Rejected</option>
-                                        </Input>
-                                        {formik.errors.status && formik.touched.status ? (
-                                            <FormFeedback type="invalid">{formik.errors.status}</FormFeedback>
-                                        ) : null}
-                                    </div>
-                                </Col>
+                            <Col md={6}>
+    <div className="mb-3">
+        <Label htmlFor="formrow-status-select">STATUS</Label>
+        <Input
+            type="select"
+            name="status"
+            className="form-control"
+            id="formrow-status-select"
+            value={formik.values.status}
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
+            invalid={formik.touched.status && formik.errors.status}
+        >
+            <option value="">Select Status</option>
+            {statusOptions.map((option, index) => (
+                <option key={index} value={option}>
+                    {option}
+                </option>
+            ))}
+        </Input>
+        {formik.errors.status && formik.touched.status ? (
+            <FormFeedback type="invalid">{formik.errors.status}</FormFeedback>
+        ) : null}
+    </div>
+</Col>
+
 
                                 <Col md={6}>
                                     <div className="mb-3">

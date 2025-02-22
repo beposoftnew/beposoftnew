@@ -139,6 +139,17 @@ const FormLayouts = () => {
 
     });
 
+
+    const [isAddDisabled, setIsAddDisabled] = useState(false);
+ 
+ 
+    useEffect(() => {
+       const role = localStorage.getItem("active");
+       if (role === "BDM" || role === "BDO") {
+           setIsAddDisabled(true);
+       }
+   }, []);
+
     
 
 
@@ -430,7 +441,7 @@ const FormLayouts = () => {
         window.open(pdfUrl, "_blank");
  
     }
-    console.log(orderItems)
+    console.log("order-itemss", orderItems)
 
 
     return (
@@ -784,6 +795,7 @@ const FormLayouts = () => {
                                                                     <Input
                                                                         type="number"
                                                                         value={item.quantity}
+                                                                        disabled={isAddDisabled}
                                                                         onChange={(e) => handleItemChange(index, 'quantity', Number(e.target.value))}
                                                                         style={{ width: '80px' }}
                                                                     />
@@ -793,6 +805,7 @@ const FormLayouts = () => {
                                                                     <Input
                                                                         type="number"
                                                                         value={item.discount}
+                                                                        disabled={isAddDisabled}
                                                                         onChange={(e) => handleItemChange(index, 'discount', Number(e.target.value))}
                                                                         style={{ width: '80px' }}
                                                                     />
@@ -802,6 +815,7 @@ const FormLayouts = () => {
                                                                 <td>
                                                                     <Button
                                                                         color="danger"
+                                                                        disabled={isAddDisabled}
                                                                         onClick={() => handleRemoveItem(item.id)}
                                                                     >
                                                                         Remove
@@ -939,13 +953,14 @@ const FormLayouts = () => {
                                                 }
                                             `}</style>
                                             <div className="mb-3 mt-3">
-                                                <Button color="primary" onClick={toggleModal}>
+                                                <Button color="primary"  disabled={isAddDisabled} onClick={toggleModal}>
                                                     Add Products
                                                 </Button>
                                             </div>
 
                                             <div className="mb-3 mt-3" style={{ textAlign: "right" }}>
-                                                <Button type="submit" color="primary" onClick={handleSubmit}>
+                                                <Button type="submit" color="primary" onClick={handleSubmit} d
+                                                  disabled={isAddDisabled}>
                                                     Submit
                                                 </Button>
                                             </div>

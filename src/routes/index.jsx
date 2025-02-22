@@ -193,6 +193,7 @@ import OrderTable from "../pages/Order/OrderList";
 import OrderItems from "../pages/Order/OrderProducts";
 import Warehouseorders from "../pages/Order/orderrequestwarehouse";
 import OrderwarehouseConform from "../pages/Order/wareorderconform"
+import Stafforder from '../pages/Order/Stafforder'
 
 
 
@@ -422,6 +423,7 @@ const authProtectedRoutes = [
   { path: "/New/Order/", component: <CreateOrder /> },
   { path: "/Orders/", component: <OrderTable /> },
   { path: "/order/:id/items/", component: <OrderItems /> },
+  { path: "/order/:id/stafforder/", component: <Stafforder /> },
   { path: "/warehouseorder/:id/items", component: <OrderwarehouseConform/>},
 
   {path: "/order/warehousee/", component: <Warehouseorders />},
