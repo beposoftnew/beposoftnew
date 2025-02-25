@@ -12,8 +12,9 @@ import Paymentrecipent from "./PaymentRecipt"
 
 // Import Breadcrumb
 import Breadcrumbs from "../../components/Common/Breadcrumb";
+import { isDisabled } from "@testing-library/user-event/dist/cjs/utils/index.js";
 
-const FormLayouts = () => {
+const   FormLayouts = () => {
 
     // meta title
     document.title = "Form Layouts | Skote - Vite React Admin & Dashboard Template";
@@ -37,6 +38,7 @@ const FormLayouts = () => {
     const currentDate = new Date().toISOString().split("T")[0];
     const [banks, setBanks] = useState([]);
     const [selectedBank, setSelectedBank] = useState('');
+    const [isAddDisabled, setIsAddDisabled] = useState(false);
 
     // const {id} = useParams();
 
@@ -138,6 +140,13 @@ const FormLayouts = () => {
         }        
 
     });
+
+    useEffect(() => {
+        const role = localStorage.getItem("active");
+        if (role === "BDM" || role === "BDO" || role === "Warehouse Admin") {
+            setIsAddDisabled(true);
+        }
+    }, []);
 
     
 
@@ -301,18 +310,13 @@ const FormLayouts = () => {
 
 
 
-
-
-
-
-    // Use the fetchOrderData in useEffect
     useEffect(() => {
         fetchOrderData();
     }, [id]);
 
     const handleRemoveItem = async (itemId) => {
         try {
-            // Replace with your API URL and method to delete the item
+            
             const response = await fetch(`${import.meta.env.VITE_APP_KEY}remove/order/${itemId}/item/`, {
                 method: 'DELETE',
                 headers: {
@@ -430,7 +434,7 @@ const FormLayouts = () => {
         window.open(pdfUrl, "_blank");
  
     }
-    console.log(orderItems)
+    console.log("order items",orderItems)
 
 
     return (
@@ -784,6 +788,7 @@ const FormLayouts = () => {
                                                                     <Input
                                                                         type="number"
                                                                         value={item.quantity}
+                                                                        disabled={isAddDisabled}
                                                                         onChange={(e) => handleItemChange(index, 'quantity', Number(e.target.value))}
                                                                         style={{ width: '80px' }}
                                                                     />
@@ -793,6 +798,7 @@ const FormLayouts = () => {
                                                                     <Input
                                                                         type="number"
                                                                         value={item.discount}
+                                                                        disabled={isAddDisabled}
                                                                         onChange={(e) => handleItemChange(index, 'discount', Number(e.target.value))}
                                                                         style={{ width: '80px' }}
                                                                     />
@@ -803,6 +809,7 @@ const FormLayouts = () => {
                                                                     <Button
                                                                         color="danger"
                                                                         onClick={() => handleRemoveItem(item.id)}
+                                                                        disabled={isDisabled}
                                                                     >
                                                                         Remove
                                                                     </Button>
@@ -939,13 +946,13 @@ const FormLayouts = () => {
                                                 }
                                             `}</style>
                                             <div className="mb-3 mt-3">
-                                                <Button color="primary" onClick={toggleModal}>
+                                                <Button color="primary"    disabled={isAddDisabled} onClick={toggleModal}>
                                                     Add Products
                                                 </Button>
                                             </div>
 
                                             <div className="mb-3 mt-3" style={{ textAlign: "right" }}>
-                                                <Button type="submit" color="primary" onClick={handleSubmit}>
+                                                <Button type="submit" color="primary"   disabled={isAddDisabled} onClick={handleSubmit}>
                                                     Submit
                                                 </Button>
                                             </div>

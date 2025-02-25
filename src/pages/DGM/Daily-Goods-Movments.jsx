@@ -41,6 +41,9 @@ const BasicTable = () => {
         setFilteredData(filtered);
     };
 
+
+
+    console.log("daily goods ovement", data);
     document.title = "Basic Tables | Skote - Vite React Admin & Dashboard Template";
 
     return (

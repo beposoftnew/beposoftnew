@@ -144,6 +144,9 @@ const FormLayouts = () => {
         },
     });
 
+
+    console.log("order detailsss", orders);
+
     return (
         <React.Fragment>
             <div className="page-content">

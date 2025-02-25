@@ -36,7 +36,7 @@ const FormLayouts = () => {
                     }
                 });
                 setOrderData(response.data.order); 
-            } catch (error) {
+            } catch (error) {   
                 console.error("Error fetching order data:", error);
             } finally {
                 setLoading(false);
@@ -53,6 +53,9 @@ const FormLayouts = () => {
     const billingAddress = orderData?.customer;
     const shippingAddress = orderData?.billing_address; 
     const warehouseData = orderData?.warehouse;
+
+
+    console.log("order data,", orderData);
 
     return (
         <React.Fragment>
@@ -123,29 +126,36 @@ const FormLayouts = () => {
                                 <CardBody>
                                     <CardTitle className="mb-4 text-center heading-with-underline">INVOICE - INFORMATION</CardTitle>
                                     <Row>
-                                        <Col sm={12} md={6}>
-                                            <address>
-                                                <strong>Billed To:</strong>
-                                                <br />
-                                                {billingAddress ? map(Object.entries(billingAddress), ([key, value], index) => (
+                                    <Col sm={12} md={6}>
+                                        <address>
+                                            <strong>Billed To:</strong>
+                                            <br />
+                                            {billingAddress ? Object.entries(billingAddress)
+                                                .filter(([key]) => key !== "id") // Exclude 'id' from being displayed
+                                                .map(([key, value], index) => (
                                                     <React.Fragment key={index}>
-                                                        <span>{key.charAt(0).toUpperCase() + key.slice(1)}: {value}</span>
+                                                        <span>{key.charAt(0).toUpperCase() + key.slice(1).replace(/_/g, " ")}: {value}</span>
                                                         <br />
                                                     </React.Fragment>
-                                                )) : "No Billing Address Available"}
-                                            </address>
-                                        </Col>
+                                                )) 
+                                                : "No Billing Address Available"}
+                                        </address>
+                                    </Col>
+
 
                                         <Col sm={12} md={6} className="text-sm-end">
                                             <address>
                                                 <strong>Shipped To:</strong>
                                                 <br />
-                                                {shippingAddress ? map(Object.entries(shippingAddress), ([key, value], index) => (
+                                                {shippingAddress ? Object.entries(shippingAddress)
+                                                .filter(([key]) => key !== "id") // Exclude 'id' from being displayed
+                                                .map(([key, value], index) => (
                                                     <React.Fragment key={index}>
-                                                        <span>{key.charAt(0).toUpperCase() + key.slice(1)}: {value}</span>
+                                                        <span>{key.charAt(0).toUpperCase() + key.slice(1).replace(/_/g, " ")}: {value}</span>
                                                         <br />
                                                     </React.Fragment>
-                                                )) : "No Shipping Address Available"}
+                                                )) 
+                                                : "No Billing Address Available"}
                                             </address>
                                         </Col>
                                     </Row>
@@ -170,7 +180,7 @@ const FormLayouts = () => {
                                                         <td>{index + 1}</td>
                                                         <td>
                                                             <img
-                                                                src={item.images?.[0] || 'No images'}
+                                                                src={`${import.meta.env.VITE_APP_KEY}${item.images?.[0] }`|| 'No images'}
                                                                 alt={item.name}
                                                                 style={{ width: '50px', height: '50px', objectFit: 'cover' }}
                                                             />

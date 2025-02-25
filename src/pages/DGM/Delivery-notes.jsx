@@ -33,7 +33,7 @@ const BasicTable = () => {
                         Authorization: `Bearer ${token}`,
                     },
                 });
-                setOrders(response.data);
+                setOrders(response.data.results);
             } catch (error) {
                 console.error("Error fetching orders:", error.response?.data || error.message);
             } finally {

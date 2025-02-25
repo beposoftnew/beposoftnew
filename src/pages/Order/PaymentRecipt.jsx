@@ -27,7 +27,7 @@ const ReceiptFormPage = () => {
 
  useEffect(() => {
     const role = localStorage.getItem("active");
-    if (role === "BDM" || role === "BDO") {
+    if (role === "BDM" || role === "BDO" || role === "Warehouse Admin") {
         setIsAddDisabled(true);
     }
 }, []);
@@ -371,7 +371,7 @@ console.log("formated dataaaaaaa", boxDetails)
                                                                     <td>{packedItems.weight}</td>
                                                                     <td>
                                                                         <img
-                                                                            src={`${packedItems.image}` || 'default-image.jpg'}
+                                                                            src={`${import.meta.env.VITE_APP_IMAGE}${packedItems.image}` || 'default-image.jpg'}
                                                                             alt={`Box ${packedItems.box}`}
                                                                             style={{ width: '25px', height: '25px', objectFit: 'cover' }}
                                                                         />

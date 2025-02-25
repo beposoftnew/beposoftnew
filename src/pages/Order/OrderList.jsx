@@ -26,12 +26,21 @@ const BasicTable = () => {
     const [nextPage, setNextPage] = useState(null);
     const [prevPage, setPrevPage] = useState(null);
     const token = localStorage.getItem("token");
+    const [ role, setRole ] = useState(null);
 
     document.title = "Orders | Beposoft";
 
+    useEffect(() =>{
+        const role = localStorage.getItem("active");
+        setRole(role);
+    },[]);
+
     useEffect(() => {
-       if(token) fetchOrders(`${import.meta.env.VITE_APP_KEY}orders/`);
-    }, [token]);
+       if(token && role) fetchOrders(`${import.meta.env.VITE_APP_KEY}orders/`);
+    }, [token,role]);
+
+
+    console.log("role information", role);
 
     const fetchOrders = async (url) => {
         if (!url) return;
@@ -40,9 +49,13 @@ const BasicTable = () => {
             const response = await axios.get(url, {
                 headers: { Authorization: `Bearer ${token}` },
             });
+
+            if(role === "Warehouse Admin"){
+              const filterOrders = response.data.results.filter(order => order.status === "To Print")
+                setOrders(filterOrders);
+            }else {
             setOrders(response.data.results);
-            setNextPage(response.data.next);
-            setPrevPage(response.data.previous);
+            }
         } catch (error) {
             setError("Error fetching orders data. Please try again later.");
             console.error("Error fetching orders data:", error);
@@ -93,7 +106,7 @@ const BasicTable = () => {
                                 <Label>Filter by Status</Label>
                                 <Input type="select" value={selectedState} onChange={(e) => setSelectedState(e.target.value)}>
                                     <option value="">All Status</option>
-                                    {['Pending', 'Approved', 'Shipped', 'Processing', 'Completed', 'Cancelled'].map(status => (
+                                    {['Pending', 'Approved', 'Shipped', 'Processing', 'Completed', 'Cancelled', 'toprint',].map(status => (
                                         <option key={status} value={status}>{status}</option>
                                     ))}
                                 </Input>

@@ -534,6 +534,15 @@ useEffect(() => {
               </li>
             ) : null}
 
+    {role === 'Warehouse Admin' ? (
+      <li>
+        <Link to="/orders/" >
+                  <FaUsers size={20} style={{ marginRight: '8px' }} />
+                  <span>{props.t("Orders")}</span>
+                </Link>
+      </li>
+    ): null}        
+
 
 {role === 'ADMIN' || role === 'ACCOUNTS' || role === 'Warehouse Admin' ? (
 
@@ -544,6 +553,7 @@ useEffect(() => {
   <span>{props.t("order request")}</span>
 </Link>
 </li>
+
 ) : null}
 
 

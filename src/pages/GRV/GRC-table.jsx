@@ -101,10 +101,7 @@ const BasicTable = () => {
                         <Col xl={12}>
                             <Card>
                                 <CardBody>
-                                    <CardTitle className="h4">Table with Axios Data</CardTitle>
-                                    <CardSubtitle className="card-title-desc">
-                                        This table fetches data using Axios and displays it dynamically.
-                                    </CardSubtitle>
+                                    <CardTitle className="h4">Grv Datas</CardTitle>
 
                                     <div className="table-responsive">
                                         <Table className="table table-bordered mb-0 custom-table">

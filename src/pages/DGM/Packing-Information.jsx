@@ -37,6 +37,10 @@ const FormRepeater = () => {
     const [staffs, setStaffs] = useState([]);
     const { id } = useParams();
 
+
+
+    console.log("iddddd", id);
+
     const onAddFormRow = () => {
         const newRow = {
             id: formRows.length + 1,
@@ -149,7 +153,6 @@ const FormRepeater = () => {
 
             if (allSuccess) {
                 setSuccessMessage("All data successfully saved!");
-                // Clear the form after successful submission
                 setFormRows([{
                     box: "Box 1",  // Reset to "Box 1" for new form rows
                     weight: "",
