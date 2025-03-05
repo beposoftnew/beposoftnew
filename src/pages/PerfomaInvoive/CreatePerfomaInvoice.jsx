@@ -34,7 +34,7 @@ const FormLayouts = () => {
     const [banks, setBank] = useState([]);
     const [companys, setCompany] = useState([]);
     const [warehouseDetails, setWarehouseDetails] = useState([]);
-    
+    const [isLoading, setIsLoading] = useState(false);
 
 
 
@@ -85,6 +85,7 @@ const FormLayouts = () => {
                 ...values,
                 total_amount: updatedTotalAmount.toFixed(2),  // Ensure correct value is used
             };
+            setIsLoading(true);
         
             try {
                 const response = await axios.post(
@@ -106,6 +107,7 @@ const FormLayouts = () => {
                         theme: "colored",
                     });
                     formik.resetForm();
+                    setIsLoading(false);
                 }
             } catch (error) {
                 console.error("Error saving data:", error);
@@ -810,7 +812,7 @@ const FormLayouts = () => {
 
                                         <div className="w-5">
                                             <Button color="primary" type="submit" className="mt-4 w-100">
-                                                create ordre
+                                              {isLoading ? "Creating..." : "Create Performa Invoice"}
                                             </Button>
                                         </div>
 

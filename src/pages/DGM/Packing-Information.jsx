@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from 'react-router-dom';
+import { useContext } from "react";
 import {
     Row,
     Col,
@@ -28,7 +29,9 @@ const FormRepeater = () => {
             height: "",
             image: null,
             packed_by: "",
-            parcel_service: ""
+            parcel_service: "",
+            shipped_date:"",
+            status:"",
         }
     ]);
     const [successMessage, setSuccessMessage] = useState("");
@@ -51,6 +54,8 @@ const FormRepeater = () => {
             height: "",
             image: null,
             packed_by: "",
+            shipped_date:"",
+            status:"",
         };
         setFormRows([...formRows, newRow]);
     };
@@ -111,6 +116,8 @@ const FormRepeater = () => {
                 formData.append("breadth", row.breadth);
                 formData.append("height", row.height);
                 formData.append("packed_by", row.packed_by);
+                formData.append("status", row.status);
+                formData.append("shipped_date", row.shipped_date);
                 if (row.image) {
                     formData.append("image", row.image);
                 }
@@ -140,6 +147,7 @@ const FormRepeater = () => {
             );
 
             const responses = await Promise.all(responsePromises);
+            fetchData();
 
             let allSuccess = true;
             responses.forEach((response) => {
@@ -161,6 +169,8 @@ const FormRepeater = () => {
                     height: "",
                     image: null,
                     packed_by: "",
+                    shipped_date:"",
+                    status:"",
                 }]);
             } else {
                 setErrorMessage("Some rows failed to save. Please check the data.");
@@ -288,6 +298,40 @@ const FormRepeater = () => {
                                                                     </option>
                                                                 ))}
                                                             </Input>
+                                                        </FormGroup>
+                                                    </Col>
+
+                                                    <Col sm={12} md={6} lg={3} className="mb-3">
+                                                        <FormGroup>
+                                                            <Label htmlFor="packed_by">Status</Label>
+                                                            <Input
+                                                                type="select"
+                                                                id="packed_by"
+                                                                value={formRow.status}
+                                                                onChange={(e) => handleInputChange(formRow.id, 'status', e.target.value)}
+                                                                className="form-control"
+                                                            >
+                                                                <option value="Packing under Progress">select status</option>
+                                                                <option value="Packing under Progress">Packing under Progress</option>
+                                                                <option value="Ready To Ship">Ready To Ship</option>
+                                                                <option value="Packed">Packed</option>
+                                                                <option value="Shipped">Shipped</option>
+                                    
+                                                               
+                                                            </Input>
+                                                        </FormGroup>
+                                                    </Col>
+
+                                                    <Col sm={12} md={6} lg={3} className="mb-3">
+                                                        <FormGroup>
+                                                            <Label htmlFor="date">Date</Label>
+                                                            <Input
+                                                                type="date"
+                                                                id="date"
+                                                                value={formRow.shipped_date || ''}
+                                                                onChange={(e) => handleInputChange(formRow.id, 'shipped_date', e.target.value)}
+                                                                className="form-control"
+                                                            />
                                                         </FormGroup>
                                                     </Col>
 

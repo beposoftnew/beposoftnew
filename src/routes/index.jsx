@@ -9,6 +9,7 @@ import FileManager from "../pages/FileManager/index";
 
 // // Profile
 import UserProfile from "../pages/Authentication/user-profile";
+import Movement from "../pages/Movements/movement";
 
 // Pages Calendar
 import Calendar from "../pages/Calendar/index";
@@ -138,6 +139,9 @@ import FormRepeater from "../pages/Forms/FormRepeater";
 import FormUpload from "../pages/Forms/FormUpload";
 import FormWizard from "../pages/Forms/FormWizard";
 import DualListbox from "../pages/Tables/DualListbox";
+import Emi from "../pages/Emi/Emi";
+import EmiDetails from "../pages/Emi/EmiDetails";
+import EmiTotalInfo from "../pages/Emi/EmiTotalInfo";
 
 // //Ui
 import UiAlert from "../pages/Ui/UiAlerts/index";
@@ -271,6 +275,7 @@ import Product from "../pages/Product/Add-product";
 import ProductList from "../pages/Product/Products";
 import Images from "../pages/Product/Images";
 import BulkProduct from  "../pages/Product/Bulk-product";
+import WaitingProducts from "../pages/Product/waitingProducts";
 
 
 //DJM
@@ -362,6 +367,11 @@ const authProtectedRoutes = [
 
   //   // //profile
   { path: "/profile", component: <UserProfile /> },
+  { path: "/add-emi/", component: <Emi /> },
+  { path: "/emi-report/", component: <EmiDetails /> },
+  { path: "/emi-fulldetails/:id/", component: <EmiTotalInfo /> },
+
+
 
 
   //stafs
@@ -384,6 +394,7 @@ const authProtectedRoutes = [
   {path: "/product/list/",component:<ProductList />},
   {path: "/product/:id/Images/",component:<Images />},
   {path: "/add/products/bulk/",component:<BulkProduct />},
+  {path: "/warehouse/waitingproducts/",component:<WaitingProducts />},
 
 
 
@@ -459,6 +470,7 @@ const authProtectedRoutes = [
 
 
 
+
   // all states
 
   { path: "/all-states/", component: <States /> },
@@ -510,6 +522,7 @@ const authProtectedRoutes = [
   { path: "/projects-overview", component: <ProjectsOverview /> },
   { path: "/projects-overview/:id", component: <ProjectsOverview /> },
   { path: "/projects-create", component: <ProjectsCreate /> },
+  { path: "/movement/:id", component: <Movement /> },
 
   //Bank
 

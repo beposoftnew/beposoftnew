@@ -16,7 +16,7 @@ const FormLayouts = () => {
     document.title = "New Order | Beposoft";
 
     const token = localStorage.getItem("token");
-    const [states, setStates] = useState([]); // All states
+    const [states, setStates] = useState([]); 
     const [staffs, setStaffs] = useState([]);
     const [customers, setCustomers] = useState([]);
     const [warehouseDetails, setWarehouseDetails] = useState([]);
@@ -34,6 +34,7 @@ const FormLayouts = () => {
     const [modalOpen, setModalOpen] = useState(false);
     const [banks, setBank] = useState([]);
     const [companys, setCompany] = useState([]);
+    const [isLoading, setIsLoading]= useState(false);
 
 
 
@@ -47,7 +48,6 @@ const FormLayouts = () => {
     const formik = useFormik({
         initialValues: {
             state: "",
-            check: "",
             company: "",
             family: "",
             customer: "",
@@ -63,7 +63,6 @@ const FormLayouts = () => {
         },
         validationSchema: Yup.object({
             state: Yup.string().required("This field is required"),
-            check: Yup.string().required("This field is required"),
             company: Yup.string().required("Company selection is required"),
             family: Yup.string().required("This field is required"),
             customer: Yup.string().required("This field is required"),
@@ -79,6 +78,7 @@ const FormLayouts = () => {
                 ...values,
                 total_amount: finalAmount, // Ensure total amount is correctly passed
             };
+            setIsLoading(true);
         
             try {
                 const response = await axios.post(
@@ -96,6 +96,7 @@ const FormLayouts = () => {
                     setCartTotalAmount(0);
                     setCartTotalDiscount(0);
                     setFinalAmount(0);
+                    setIsLoading(false);
         
                     toast.success("Order created successfully!", {
                         position: "top-right",
@@ -110,6 +111,7 @@ const FormLayouts = () => {
                 }
             } catch (error) {
                 console.error("Error saving data:", error);
+                setIsLoading(false);
                 setError((prevError) => ({
                     ...prevError,
                     submitError: "Failed to save data",
@@ -647,26 +649,6 @@ console.log("cartproducts..:", cartProducts);
                                                                </div>                                                                       </Col>
                                         </Row>
 
-                                        <div className="mb-3">
-                                            <div className="form-check">
-                                                <Input
-                                                    type="checkbox"
-                                                    className="form-check-input"
-                                                    id="formrow-customCheck"
-                                                    name="check"
-                                                    value={formik.values.check}
-                                                    onChange={formik.handleChange}
-                                                    onBlur={formik.handleBlur}
-                                                    invalid={formik.touched.check && formik.errors.check ? true : false}
-                                                />
-                                                <Label className="form-check-label" htmlFor="formrow-customCheck">
-                                                    Check me out
-                                                </Label>
-                                            </div>
-                                            {formik.errors.check && formik.touched.check ? (
-                                                <FormFeedback type="invalid">{formik.errors.check}</FormFeedback>
-                                            ) : null}
-                                        </div>
 
 
                                         <div className="mb-3">
@@ -875,7 +857,7 @@ console.log("cartproducts..:", cartProducts);
 
                                         <div className="w-5">
                                             <Button color="primary" type="submit" className="mt-4 w-100">
-                                                create ordre
+                                               {isLoading? "creating.....": "Create Order"}
                                             </Button>
                                         </div>
 

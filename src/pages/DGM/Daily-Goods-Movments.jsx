@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Table, Row, Col, Card, CardBody, CardTitle, Input, Button } from "reactstrap";
 import Breadcrumbs from "../../components/Common/Breadcrumb";
+import { useNavigate } from "react-router-dom";
 
 const BasicTable = () => {
     const [data, setData] = useState([]);
@@ -9,6 +10,8 @@ const BasicTable = () => {
     const [startDate, setStartDate] = useState("");
     const [endDate, setEndDate] = useState("");
     const token = localStorage.getItem('token');
+
+    const navigate = useNavigate();
 
     useEffect(() => {
         axios.get(`${import.meta.env.VITE_APP_KEY}warehouse/box/detail/`, {
@@ -42,9 +45,13 @@ const BasicTable = () => {
     };
 
 
+const handleClick = (date) => {
+    console.log("date", date);
+    navigate(`/Movement/${date}`);
+}
+
 
     console.log("daily goods ovement", data);
-    document.title = "Basic Tables | Skote - Vite React Admin & Dashboard Template";
 
     return (
         <React.Fragment>
@@ -94,6 +101,7 @@ const BasicTable = () => {
                                                     <th>Total Volume Wt. (In Kg.)</th>
                                                     <th>Total Actual Wt.</th>
                                                     <th>Total Delivery Charge</th>
+                                                    <th>Actions</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -105,6 +113,9 @@ const BasicTable = () => {
                                                         <td>{item.total_weight}</td>
                                                         <td>{item.total_volume_weight}</td>
                                                         <td>{item.total_shipping_charge}</td>
+                                                        <td>
+                                                            <button  onClick={() =>handleClick(item.shipped_date)} style={{border:"none", background:"blue", color:"white"}}>View</button>
+                                                        </td>
                                                     </tr>
                                                 ))}
                                             </tbody>

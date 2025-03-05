@@ -54,15 +54,24 @@ const DatatableTables = () => {
             },
             {
                 header: 'Department',
-                accessorKey: 'department',
+                accessorKey: 'department_name',
                 enableColumnFilter: false,
                 enableSorting: true,
             },
             {
-                header: 'Salary',
-                accessorKey: 'salary',
+                header: 'Image',
+                accessorKey: 'image',
                 enableColumnFilter: false,
                 enableSorting: true,
+                cell: ({ row }) => (
+                    row.original.image ? (
+                        <img
+                            src={`${import.meta.env.VITE_APP_IMAGE}${row.original.image}`}
+                            alt="Staff"
+                            style={{ width: '70px', height: '70px' }} // Adjust the size as needed
+                        />
+                    ) : null
+                ),
             },
             {
                 header: 'Actions',
@@ -118,6 +127,8 @@ const DatatableTables = () => {
 
     // Set meta title
     document.title = "Staff | Beposoft";
+
+    console.log("staff information", data);
 
     return (
         <div className="page-content">

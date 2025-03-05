@@ -56,7 +56,8 @@ const FormLayouts = () => {
             approval_status: "",
             signatur_up: "",
             family: "",
-            check: "",
+            image: "",
+            warehouse_id:""
         },
         validationSchema: Yup.object({
             // Basic Info
@@ -91,6 +92,7 @@ const FormLayouts = () => {
             family: Yup.string().required("Please select family"),
             department_id: Yup.string().required("Please select a department"),
             supervisor_id: Yup.string().required("Please select a supervisor"),
+            warehouse_id: Yup.string().required("Please choose Warehouse"),
 
             // Signature
             signatur_up: Yup.string().required("Signature is required"),
@@ -105,25 +107,31 @@ const FormLayouts = () => {
 
             approval_status: Yup.string().required("This field is required"),
             gender: Yup.string().required("This field is required"),
-
-            // Other
-            check: Yup.string().required("This field is required"),
         }),
 
         onSubmit: async (values, { resetForm }) => {
             try {
                 console.log("Formik Values Before Submission:", values);
+        
                 const formData = new FormData();
         
                 for (let key in values) {
                     if (key === "signatur_up" && values[key]) {
                         formData.append(key, values[key]); 
                     } else if (key === "allocated_states") {
-                        values[key].forEach(state => formData.append('allocated_states', state)); 
+                        if (values[key].length > 0) {
+                            values[key].forEach(state => formData.append('allocated_states', state)); 
+                        } else {
+                            formData.append('allocated_states', ""); // Send an empty value if nothing is selected
+                        }
                     } else if (values[key] !== '') {
+                        formData.append(key, values[key]);
+                    } else if (key === "image" && values[key]) {
                         formData.append(key, values[key]);
                     }
                 }
+        
+                console.log("Final allocated_states sent to backend:", formData.getAll("allocated_states"));
         
                 const response = await axios.post(
                     `${import.meta.env.VITE_APP_KEY}add/staff/`,
@@ -148,7 +156,7 @@ const FormLayouts = () => {
                         theme: "colored",
                     });
         
-                    resetForm(); // **Clears the form fields after submission**
+                    resetForm();
                 } else {
                     setError("Failed to submit the form");
                     toast.error("Failed to submit the order!", {
@@ -168,7 +176,8 @@ const FormLayouts = () => {
         }
         
         
-
+        
+    
     });
 
 
@@ -225,12 +234,18 @@ const FormLayouts = () => {
         }
     }, [token]);
 
-    // Handler for multi-select changes
     const handleMultiChange = (selectedOptions) => {
         const selectedValues = selectedOptions ? selectedOptions.map(option => option.value) : [];
-        formik.setFieldValue("allocated_states", selectedValues); // Store the selected values as an array
-        setSelectedStates(selectedOptions);
+        console.log("Selected allocated_states IDs:", selectedValues);
+    
+        formik.setFieldValue("allocated_states", selectedValues); // Update Formik state
+        setSelectedStates(selectedOptions); // Ensure the select component updates
     };
+
+    console.log("Formik allocated_states before submission:", formik.values.allocated_states);
+
+    
+    
 
 
     const fetchWarehouse = async () => {
@@ -563,10 +578,10 @@ const FormLayouts = () => {
                                                 <div className="mb-3">
                                                 <Label htmlFor="formrow-Supervisor-Input">warehouse</Label>
                                                 <select
-                                                        name="warehouse"
+                                                        name="warehouse_id"
                                                         id="formrow-Supervisor-Input"
-                                                        className={`form-control ${formik.touched.warehouse && formik.errors.warehouse ? 'is-invalid' : ''}`}
-                                                        value={formik.values.warehouse}
+                                                        className={`form-control ${formik.touched.warehouse_id && formik.errors.warehouse_id ? 'is-invalid' : ''}`}
+                                                        value={formik.values.warehouse_id}
                                                         onChange={formik.handleChange}
                                                         onBlur={formik.handleBlur}
                                                     >
@@ -886,38 +901,26 @@ const FormLayouts = () => {
                                                     ) : null}
                                                 </div>
                                             </Col>
-
-
+                                            <Col lg={4}>
+                                                <div className="mb-3">
+                                                    <Label htmlFor="formrow-Signature-Input">image Upload</Label>
+                                                    <Input
+                                                        type="file"
+                                                        name="image"
+                                                        id="formrow-Signature-Input"
+                                                        onChange={(event) => {
+                                                            formik.setFieldValue("image", event.currentTarget.files[0]);
+                                                        }}
+                                                        onBlur={formik.handleBlur}
+                                                        invalid={formik.touched.image && formik.errors.image ? true : false}
+                                                    />
+                                                    {formik.errors.image && formik.touched.image ? (
+                                                        <FormFeedback type="invalid">{formik.errors.image}</FormFeedback>
+                                                    ) : null}
+                                                </div>
+                                            </Col>
 
                                         </Row>
-
-                                        <div className="mb-3">
-                                            <div className="form-check">
-                                                <Input
-                                                    type="checkbox"
-                                                    className="form-check-Input"
-                                                    id="formrow-customCheck"
-                                                    name="check"
-                                                    value={formik.values.check}
-                                                    onChange={formik.handleChange}
-                                                    onBlur={formik.handleBlur}
-                                                    invalid={
-                                                        formik.touched.check && formik.errors.check ? true : false
-                                                    }
-                                                />
-                                                <Label
-                                                    className="form-check-Label"
-                                                    htmlFor="formrow-customCheck"
-                                                >
-                                                    Check me out
-                                                </Label>
-                                            </div>
-                                            {
-                                                formik.errors.check && formik.touched.check ? (
-                                                    <FormFeedback type="invalid">{formik.errors.check}</FormFeedback>
-                                                ) : null
-                                            }
-                                        </div>
                                         <div className="mb-3">
                                             {console.log("Formik values:", formik.values)}
                                             <Button type="submit" color="primary" disabled={formik.isSubmitting}>

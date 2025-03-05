@@ -73,6 +73,7 @@ const Login = (props) => {
           localStorage.setItem('token', data.token);
           localStorage.setItem('active', data.active);
           localStorage.setItem('name', data.name);
+          localStorage.setItem('warehouseId', data.warehouse_id || '');
     
           // Dispatch the loginUser action with the token and navigate
           dispatch(loginUser({

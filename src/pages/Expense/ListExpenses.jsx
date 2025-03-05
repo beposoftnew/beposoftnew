@@ -38,6 +38,8 @@ const BasicTable = () => {
         fetchExpenses();
     }, [token]);
 
+    console.log("expenses", expenses);  
+
     useEffect(() => {
         let filteredData = expenses;
 

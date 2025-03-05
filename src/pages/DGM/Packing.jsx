@@ -11,8 +11,7 @@ import {
     Input,
     Table 
 } from "reactstrap";
-import axios from "axios";
-import { map } from 'lodash';
+import axios from "axios"
 import PackingInformation from "./Packing-Information"
 import ShippingInformation from "./Shipping-Information"
 
@@ -55,7 +54,7 @@ const FormLayouts = () => {
     const warehouseData = orderData?.warehouse;
 
 
-    console.log("order data,", orderData);
+    console.log("order data,", orderData?.items);
 
     return (
         <React.Fragment>
@@ -180,7 +179,7 @@ const FormLayouts = () => {
                                                         <td>{index + 1}</td>
                                                         <td>
                                                             <img
-                                                                src={`${import.meta.env.VITE_APP_KEY}${item.images?.[0] }`|| 'No images'}
+                                                                src={`${import.meta.env.VITE_APP_IMAGE}${item.image}`|| 'No images'}
                                                                 alt={item.name}
                                                                 style={{ width: '50px', height: '50px', objectFit: 'cover' }}
                                                             />

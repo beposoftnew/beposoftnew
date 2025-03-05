@@ -15,6 +15,7 @@
         const [errorMessage, setErrorMessage] = useState(""); 
         const [warehouseDetails, setWarehouseDetails] = useState([]);
         const token = localStorage.getItem('token');
+        const [isLoading, setIsLoading] = useState(false);
 
         const UNIT_TYPES = [
             { value: 'NOS', label: 'NOS' },
@@ -44,10 +45,10 @@
                 type: "",
                 groupID: "",
                 stock:"",
-                check: false,
                 warehouse:"",
                 retail_price: "",
                 landing_cost: "",
+                purchase_type: "International",
             },
             validationSchema: Yup.object({
                 name: Yup.string().required("This field is required"),
@@ -60,7 +61,6 @@
                 type: Yup.string().required("This field is required"),
                 groupID: Yup.string().required("This field is required"),
                 stock : Yup.string().required("This field is required"),
-                check: Yup.bool().oneOf([true], "You must accept the terms"),
                 warehouse: Yup.string().required("This field is required"),
             }),
        
@@ -70,6 +70,7 @@
                     type: values.type || "variant"
                 };
                 console.log("Final Payload to Backend:", payload);
+                setIsLoading(true);
                 
                 try {
                     const response = await axios.post(`${import.meta.env.VITE_APP_KEY}add/product/`, payload, {
@@ -81,11 +82,13 @@
                     
                     setSuccessMessage("Form submitted successfully!");
                     console.log('Form submitted successfully:', response.data);
+                    setIsLoading(false);
                     
                     resetForm(); // **Clears the form after successful submission**
                 } catch (error) {
                     setErrorMessage("Error submitting form. Please try again.");
                     console.error('Error submitting form:', error);
+                    setIsLoading(false);
                 }
             }
             
@@ -146,13 +149,14 @@
                             <Col xl={12}>
                                 <Card>
                                     <CardBody>
-                                        <CardTitle className="mb-4">Form Grid Layout</CardTitle>
+                                        <CardTitle className="mb-4">Purchase Form</CardTitle>
 
                                         {/* Show success or error messages */}
                                         {successMessage && <Alert color="success">{successMessage}</Alert>}
                                         {errorMessage && <Alert color="danger">{errorMessage}</Alert>}
-
                                         <Form onSubmit={formik.handleSubmit}>
+                                        <Row>
+                                            <Col md={8}>
                                             <div className="mb-3">
                                                 <Label htmlFor="formrow-name-Input">Name</Label>
                                                 <Input
@@ -170,8 +174,31 @@
                                                     <FormFeedback>{formik.errors.name}</FormFeedback>
                                                 )}
                                             </div>
+                                            </Col>
+                                            <Col md={4}>
+                                            <div className="mb-3">
+                                                <Label htmlFor="formrow-name-Input">Purchase Type</Label>
+                                                <select
+                                                            name="purchase_type"
+                                                            id="formrow-family-Input"
+                                                            className="form-control"
+                                                            value={formik.values.purchase_type}
+                                                            onChange={formik.handleChange}
+                                                            onBlur={formik.handleBlur}
+                                                            invalid={formik.touched.purchase_type && formik.errors.purchase_type}
+                                                        >
+                                                            <option value="">international</option>
+                                                            <option value="Local">Local Purchase</option>
+                                                            <option value="International">International Purchase</option>
+                                                        </select>
+                                                {formik.errors.name && formik.purchase_type && (
+                                                    <FormFeedback>{formik.errors.purchase_type}</FormFeedback>
+                                                )}
+                                            </div>
+                                            </Col>
+                                        </Row>
 
-                                            <Row>
+                                           <Row>
                                                 <Col md={4}>
                                                     <div className="mb-3">
                                                         <Label htmlFor="formrow-hsn_code-Input">HSN CODE</Label>
@@ -276,7 +303,7 @@
                                                 </Col>
                                                 <Col lg={3}>
                                                     <div className="mb-3">
-                                                        <Label htmlFor="formrow-family-Input">Family</Label>
+                                                        <Label htmlFor="formrow-family-Input">Division</Label>
                                                         <select
                                                             name="family"
                                                             id="formrow-family-Input"
@@ -425,28 +452,8 @@
                                                 </Col>
                                             </Row>
 
-                                            <div className="mb-3">
-                                                <div className="form-check">
-                                                    <Input
-                                                        type="checkbox"
-                                                        className="form-check-input"
-                                                        id="formrow-check"
-                                                        name="check"
-                                                        value={formik.values.check}
-                                                        onChange={formik.handleChange}
-                                                        onBlur={formik.handleBlur}
-                                                        invalid={formik.touched.check && formik.errors.check}
-                                                    />
-                                                    <Label className="form-check-label" htmlFor="formrow-check">
-                                                        Check me out
-                                                    </Label>
-                                                </div>
-                                                {formik.errors.check && formik.touched.check && (
-                                                    <FormFeedback>{formik.errors.check}</FormFeedback>
-                                                )}
-                                            </div>
                                             <button type="submit" className="btn btn-primary w-md">
-                                                Submit
+                                             {isLoading ? "submiting..." : "Submit"}  
                                             </button>
                                         </Form>
                                     </CardBody>

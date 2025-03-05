@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
+import axios from "axios";
 import {
     Table,
     Row,
@@ -7,166 +8,105 @@ import {
     CardBody,
     CardTitle,
 } from "reactstrap";
-import { useNavigate } from "react-router-dom"; 
-import axios from "axios";
-
-import { jsPDF } from "jspdf";
-import * as XLSX from "xlsx";
-
 import Breadcrumbs from "../../components/Common/Breadcrumb";
+import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const BasicTable = () => {
-    document.title = "Basic Tables | Skote - Vite React Admin & Dashboard Template";
-
     const [orders, setOrders] = useState([]);
-    const [loading, setLoading] = useState(false);
-
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+    const token = localStorage.getItem("token");
+    const [ role, setRole ] = useState(null);
     const navigate = useNavigate();
 
+    document.title = "Orders | Beposoft";
+
+    useEffect(() =>{
+        const role = localStorage.getItem("active");
+        setRole(role);
+    },[]);
+
     useEffect(() => {
-        const fetchOrders = async () => {
+       if(token && role) fetchOrders(`${import.meta.env.VITE_APP_KEY}orders/`);
+    }, [token,role]);
+
+
+    console.log("role information", role);
+
+    const fetchOrders = async (url) => {
+        if (!url) return;
+        try {
             setLoading(true);
-            try {
-                const token = localStorage.getItem("token"); 
-                const response = await axios.get(`${import.meta.env.VITE_APP_KEY}orders/`, {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                });
-                setOrders(response.data.results);
-            } catch (error) {
-                console.error("Error fetching orders:", error.response?.data || error.message);
-            } finally {
-                setLoading(false);
+            const response = await axios.get(url, {
+                headers: { Authorization: `Bearer ${token}` },
+            });
+
+            if(role === "Warehouse Admin"){
+              const filterOrders = response.data.results.filter(order => order.status === "To Print")
+                setOrders(filterOrders);
+                console.log("warehose is working");
+            }else {
+                console.log("this is workign");
+            setOrders(response.data.results);
             }
-        };
-
-        fetchOrders();
-    }, []);
-
-    const calculateTotalVolumeWeight = (warehouse) => {
-        return warehouse.reduce((totalWeight, box) => {
-            const { length, breadth, height } = box;
-            const volWt = (length * breadth * height) / 6000;
-            return totalWeight + volWt; 
-        }, 0);
-    };
-
-    const calculateTotalWeight = (warehouse) => {
-        return warehouse.reduce((totalWeight, item) => {
-            return totalWeight + parseFloat(item.weight); // Convert weight to number and sum
-        }, 0);
-    };
-
-    const calculateTotalShippingCharge = (warehouse) => {
-        return warehouse.reduce((totalCharge, item) => {
-            return totalCharge + parseFloat(item.shipping_charge || 0); // Treat null as 0
-        }, 0);
-    };
-
-    const handleAction = (actionType, orderId) => {
-        switch (actionType) {
-            case "view":
-                navigate(`/order/packing/${orderId}/progress/`);
-                break;
-            case "pdf":
-                generatePDF(orderId);
-                break;
-            case "excel":
-                generateExcel(orderId);
-                break;
-            default:
-                break;
+        } catch (error) {
+            setError("Error fetching orders data. Please try again later.");
+            console.error("Error fetching orders data:", error);
+        } finally {
+            setLoading(false);
         }
     };
 
-    const generatePDF = (orderId) => {
-        const doc = new jsPDF();
-        doc.text(`Order ID: ${orderId}`, 10, 10);
-        doc.text("Order details go here...", 10, 20); 
-        doc.save(`order_${orderId}.pdf`);
-    };
 
-    const generateExcel = (orderId) => {
-        const orderData = orders.find((order) => order.id === orderId);
-        const ws = XLSX.utils.json_to_sheet([orderData]);
-        const wb = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(wb, ws, "Order Data");
-        XLSX.writeFile(wb, `order_${orderId}.xlsx`);
-    };
+    console.log("results", orders );
+
+    const viewDeliveryNote = (invoiceId) => {
+        console.log("id", invoiceId);
+        navigate(`/order/packing/${invoiceId}/progress/`);     
+    }
+
 
     return (
         <React.Fragment>
             <div className="page-content">
                 <div className="container-fluid">
-                    <Breadcrumbs title="Tables" breadcrumbItem="DELIVERY LIST" />
+                    <Breadcrumbs title="Tables" breadcrumbItem="Delivery note list" />
                     <Row>
                         <Col xl={12}>
                             <Card>
                                 <CardBody>
-                                    <CardTitle className="h4">DELIVERY NOTES</CardTitle>
-                                    {loading ? (
-                                        <div>Loading...</div>
-                                    ) : (
-                                        <div className="table-responsive">
-                                            <Table className="table mb-0 table-bordered">
-                                                <thead className="table-light">
+                                    <CardTitle className="h4"></CardTitle>
+                                    <div className="table-responsive">
+                                        {loading ? <div>Loading...</div> : error ? <div className="text-danger">{error}</div> : (
+                                            <Table className="table mb-0">
+                                                <thead>
                                                     <tr>
                                                         <th>#</th>
-                                                        <th>INVOICE</th>
+                                                        <th>INVOICE NO</th>
                                                         <th>CUSTOMER</th>
-                                                        <th>BOXS</th>
-                                                        <th>Vol Wt</th>
-                                                        <th>Actual Wt (Grms.)</th>
-                                                        <th>Delivery Charge</th>
                                                         <th>STATUS</th>
-                                                        <th>CREATE AT</th>
-                                                        <th>ACTION</th>
+                                                        <th>BILL AMOUNT</th>
+                                                        <th>CREATED AT</th>
+                                                        <th>view</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    {orders.length > 0 ? (
-                                                        orders.map((order, index) => {
-                                                            const totalVolumeWeight = calculateTotalVolumeWeight(order.warehouse);
-                                                            const totalActualWeight = calculateTotalWeight(order.warehouse);
-                                                            const totalShippingCharge = calculateTotalShippingCharge(order.warehouse);
-                                                            return (
-                                                                <tr key={order.id}>
-                                                                    <th scope="row">{index + 1}</th>
-                                                                    <td style={{ fontWeight: "bold", color: "blue" }}>{order.invoice}</td>
-                                                                    <td style={{ fontWeight: "bold", color: "green" }}>{order.customer.name}</td>
-                                                                    <td>{order.warehouse.length} </td>
-                                                                    <td>{totalVolumeWeight.toFixed(2)}</td>
-                                                                    <td>{totalActualWeight.toFixed(2)} kg</td> 
-                                                                    <td>{totalShippingCharge}</td>
-                                                                    <td style={{ fontWeight: "bold", color: order.status === "Delivered" ? "green" : "red" }}>
-                                                                        {order.status}
-                                                                    </td>
-                                                                    <td>{order.order_date}</td>
-                                                                    <td>
-                                                                        <select
-                                                                            className="form-control"
-                                                                            onChange={(e) => handleAction(e.target.value, order.id)}
-                                                                            defaultValue=""
-                                                                        >
-                                                                            <option value="" disabled>Select Action</option>
-                                                                            <option value="view">View</option>
-                                                                            <option value="pdf">PDF</option>
-                                                                            <option value="excel">Excel</option>
-                                                                        </select>
-                                                                    </td>
-                                                                </tr>
-                                                            );
-                                                        })
-                                                    ) : (
-                                                        <tr>
-                                                            <td colSpan="11">No orders found</td>
+                                                    {orders.map((order, index) => (
+                                                        <tr key={order.id}>
+                                                            <th scope="row">{index + 1}</th>
+                                                            <td>{order.invoice}</td>
+                                                            <td>{order.customer.name}</td>
+                                                            <td>{order.status}</td>
+                                                            <td>{order.total_amount}</td>
+                                                            <td>{order.order_date}</td>
+                                                            <td><button onClick={() => viewDeliveryNote(order.id)} style={{padding:"10px 20px", border:"none", background:"#3258a8", color:"white"}}>View</button></td>
                                                         </tr>
-                                                    )}
+                                                    ))}
                                                 </tbody>
                                             </Table>
-                                        </div>
-                                    )}
+                                        )}
+                                    </div>
                                 </CardBody>
                             </Card>
                         </Col>

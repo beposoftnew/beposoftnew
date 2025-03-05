@@ -3,7 +3,7 @@ import { Card, Col, Container, Row, CardBody, CardTitle, Label, Form, Input, For
 import * as Yup from 'yup';
 import { useFormik } from "formik";
 import axios from "axios";
-import Breadcrumbs from "../../components/Common/Breadcrumb";
+import Breadcrumbs from "../../components/Common/Breadcrumb";   
 
 const FormLayouts = () => {
     document.title = "Form Layouts | Skote - Vite React Admin & Dashboard Template";
@@ -84,7 +84,7 @@ const FormLayouts = () => {
             label: "Travel",
         },
         { 
-            value: "other",
+            value: "Other assets",
             label: "Others",
         }
     ]
@@ -100,7 +100,9 @@ const FormLayouts = () => {
             transaction_id: "",
             description: "",
             added_by: "",
-            check: "",
+            // name:"",
+            // quantity:"",
+            asset_types:""
         },
         validationSchema: Yup.object({
             company: Yup.string().required("This field is required"),
@@ -112,20 +114,43 @@ const FormLayouts = () => {
             transaction_id: Yup.string().required("This field is required"),
             description: Yup.string().required("This field is required"),
             added_by: Yup.string().required("This field is required"),
-            check: Yup.string().required("This field is required"),
+            asset_types: Yup.string().required("Select any type"),
+        
+            // ✅ Name is required only if asset_types is NOT "expenses"
+            name: Yup.string().when("asset_types", {
+                is: (val) => val !== "expenses",
+                then: (schema) => schema.required("Name is required"),
+            }),
+        
+            // ✅ Quantity is required and must be an integer only if asset_types is NOT "expenses"
+            quantity: Yup.number().when("asset_types", {
+                is: (val) => val !== "expenses",
+                then: (schema) => schema.required("Quantity is required").integer("Quantity must be an integer"),
+            }),
         }),
+        
+
 
         onSubmit: async (values, { resetForm }) => {
             try {
+                let formData = { ...values };
+        
+                // ✅ Remove name & quantity if asset_types is "expenses"
+                if (values.asset_types === "expenses") {
+                    delete formData.name;
+                    delete formData.quantity;
+                }
+        
                 const response = await axios.post(
                     `${import.meta.env.VITE_APP_KEY}expense/add/`,
-                    values,
+                    formData,
                     {
                         headers: {
                             'Authorization': `Bearer ${token}`,
                         },
                     }
                 );
+        
                 setSuccessMessage("Form submitted successfully!");
                 setErrorMessage('');
                 resetForm();
@@ -135,7 +160,9 @@ const FormLayouts = () => {
                 setSuccessMessage('');
             }
         }
+        
     });
+
 
     return (
         <React.Fragment>
@@ -234,6 +261,68 @@ const FormLayouts = () => {
                                                     ) : null}
                                                 </div>
                                             </Col>
+                                        </Row>
+                                        <Row>
+                                            <Col md={4}>
+                                            <div className="mb-3">
+                                                    <Label htmlFor="formrow-company-Input">type of payment</Label>
+                                                    <Input
+                                                        type="select"
+                                                        name="asset_types"
+                                                        className="form-control"
+                                                        id="formrow-company-Input"
+                                                        value={formik.values.asset_types}
+                                                        onChange={formik.handleChange}
+                                                        onBlur={formik.handleBlur}
+                                                        invalid={formik.touched.asset_types && formik.errors.asset_types ? true : false}
+                                                    >
+                                                        <option value="assets" label="Assets" />
+                                                        <option value="expenses" label="Expenses" />
+                                                    </Input>
+                                                    {formik.errors.company && formik.touched.company ? (
+                                                        <FormFeedback type="invalid">{formik.errors.ASSET_CHOICES}</FormFeedback>
+                                                    ) : null}
+                                                </div>
+                                            </Col>
+                                            <Col md={4}>
+    <div className="mb-3">
+        <Label htmlFor="formrow-name-Input">Name</Label>
+        <Input
+            name="name"
+            className="form-control"
+            id="formrow-name-Input"
+            value={formik.values.name}
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
+            invalid={formik.touched.name && formik.errors.name ? true : false}
+            disabled={formik.values.asset_types === "expenses"} // Disable input when asset_types is "expenses"
+        />
+        {formik.errors.name && formik.touched.name ? (
+            <FormFeedback type="invalid">{formik.errors.name}</FormFeedback>
+        ) : null}
+    </div>
+</Col>
+
+<Col md={4}>
+    <div className="mb-3">
+        <Label htmlFor="formrow-quantity-Input">Quantity</Label>
+        <Input
+            type="number"
+            name="quantity"
+            className="form-control"
+            id="formrow-quantity-Input"
+            value={formik.values.quantity}
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
+            invalid={formik.touched.quantity && formik.errors.quantity ? true : false}
+            disabled={formik.values.asset_types === "expenses"} // Disable input when asset_types is "expenses"
+        />
+        {formik.errors.quantity && formik.touched.quantity ? (
+            <FormFeedback type="invalid">{formik.errors.quantity}</FormFeedback>
+        ) : null}
+    </div>
+</Col>
+
                                         </Row>
 
                                         <Row>
@@ -365,30 +454,6 @@ const FormLayouts = () => {
                                                 </div>
                                             </Col>
                                         </Row>
-
-                                        <div className="mb-3">
-                                            <div className="form-check">
-                                                <Input
-                                                    type="checkbox"
-                                                    className="form-check-Input"
-                                                    id="formrow-customCheck"
-                                                    name="check"
-                                                    value={formik.values.check}
-                                                    onChange={formik.handleChange}
-                                                    onBlur={formik.handleBlur}
-                                                    invalid={formik.touched.check && formik.errors.check ? true : false}
-                                                />
-                                                <Label
-                                                    className="form-check-Label"
-                                                    htmlFor="formrow-customCheck"
-                                                >
-                                                    Check me out
-                                                </Label>
-                                            </div>
-                                            {formik.errors.check && formik.touched.check ? (
-                                                <FormFeedback type="invalid">{formik.errors.check}</FormFeedback>
-                                            ) : null}
-                                        </div>
                                         <div>
                                             <button type="submit" className="btn btn-primary w-md">
                                                 Submit

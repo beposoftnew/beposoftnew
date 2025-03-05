@@ -32,6 +32,7 @@ const FormLayouts = () => {
     const [selectedProducts, setSelectedProducts] = useState([]);
     const [orderProducts, setOrderProducts] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [orderid , setOrderId] = useState(null);
     const date = new Date();
 
     const currentDate = date.toISOString().split('T')[0]; // This will give you the date in "YYYY-MM-DD" format
@@ -73,14 +74,30 @@ const FormLayouts = () => {
                 billing_address: order.billing_address?.address || "",
                 manage_staff: order.manage_staff || "",
             });
-
-            // Extract products from the selected order
-            setOrderProducts(order.items || []); // `items` is the field containing product data
         } else {
             formik.resetForm();
-            setOrderProducts([]);
         }
     };
+
+
+    const FetchReturnProducts = async(id) => {
+
+        toggleModal();
+
+        try {
+            const response = await axios.get(`${import.meta.env.VITE_APP_KEY}order/${id}/items/`, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                }
+            });
+            console.log("response from products", response);
+            if (response.status === 200) {
+                setOrderProducts(response.data?.items);
+            }
+        } catch (error) {
+            console.log("error fetching products");
+        }
+    }
 
 
     const toggleModal = () => setModal(!modal);
@@ -247,7 +264,13 @@ const FormLayouts = () => {
                                             </Col>
                                         </Row>
                                     </Form>
-                                    <Button color="primary" onClick={toggleModal}>
+                                    <Button color="primary" onClick={() => {
+                                        if (selectedOrder){
+                                            FetchReturnProducts(selectedOrder.id);
+                                        } else{
+                                            return alert("Please select an order first");
+                                        }
+                                    }}>
                                         Add Products
                                     </Button>
                                 </CardBody>
@@ -275,7 +298,7 @@ const FormLayouts = () => {
                                                         <td>{index + 1}</td>
                                                         <td>
                                                             <img
-                                                                src={`${product.image}`}
+                                                                src={`${import.meta.env.VITE_APP_IMAGE}${product.image}`}
                                                                 alt={product.name}
                                                                 style={{
                                                                     width: "50px",
@@ -418,7 +441,7 @@ const FormLayouts = () => {
                                                 <td>{product.name} </td>
                                                 <td>
                                                     <img
-                                                        src={`${product.image}`}
+                                                        src={`${import.meta.env.VITE_APP_IMAGE}${product.image}`}
                                                         alt={product.name}
                                                         style={{
                                                             width: "50px",

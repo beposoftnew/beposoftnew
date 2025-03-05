@@ -15,6 +15,9 @@ import { useCallback } from "react";
 
 import { FaUsers } from 'react-icons/fa';
 import { FaUserTie } from "react-icons/fa"; 
+import { BiCheckDouble } from "react-icons/bi";
+import { BsArrowRightSquareFill } from "react-icons/bs";
+import { LuCircleCheckBig } from "react-icons/lu";
 
 
 
@@ -508,6 +511,7 @@ useEffect(() => {
                   <li>
                     <Link to="/beposoft/grv/view/">{props.t("grv list")}</Link>
                   </li>
+                
                 </ul>
               </li>
 
@@ -541,10 +545,23 @@ useEffect(() => {
                   <span>{props.t("Orders")}</span>
                 </Link>
       </li>
-    ): null}        
+      
+      
+    ): null}       
+
+     {role === 'Warehouse Admin' ? (
+      <li>
+        <Link to="/warehouse/waitingproducts/" >
+                  <BsArrowRightSquareFill size={20} style={{ marginRight: '8px' }} />
+                  <span>{props.t("productsWaiting For Conformation")}</span>
+                </Link>
+      </li>
+      
+      
+    ): null}   
 
 
-{role === 'ADMIN' || role === 'ACCOUNTS' || role === 'Warehouse Admin' ? (
+{/* {role === 'ADMIN' || role === 'ACCOUNTS' || role === 'Warehouse Admin' ? (
 
 
 <li>
@@ -554,7 +571,7 @@ useEffect(() => {
 </Link>
 </li>
 
-) : null}
+) : null} */}
 
 
 
@@ -630,6 +647,32 @@ useEffect(() => {
 
 
             ) : null}
+
+{role === 'ADMIN' || role === 'ACCOUNTS' || role === 'IT' ? (
+      <li>
+        <Link to="#" >
+                  <BiCheckDouble size={20} style={{ marginRight: '8px' }} />
+                  <span>{props.t("Add Emi")}</span>
+                </Link>
+
+                <ul>
+                  <li>
+                  <Link to="/add-emi/" >
+                  <BiCheckDouble size={20} style={{ marginRight: '8px' }} />
+                  <span>{props.t("Add Emi")}</span>
+                </Link>
+
+                  </li>
+                  <Link to="/emi-report/" >
+                  <LuCircleCheckBig size={20} style={{ marginRight: '8px' }} />
+                  <span>{props.t("Emi Details")}</span>
+                </Link>
+                </ul>
+      </li>
+      
+      
+    ): null}  
+
           </ul>
         </div>
       </SimpleBar>

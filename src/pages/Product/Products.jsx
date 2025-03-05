@@ -187,6 +187,7 @@ const BasicTable = () => {
                                                         <th>EXCLUDED PRICE</th>
                                                         <th>WHOLESALE PRICE</th>
                                                         <th>RETAIL PRICE</th>
+                                                        <th>TYPE</th>
                                                         <th>Actions</th>
                                                     </tr>
                                                 </thead>
@@ -217,6 +218,7 @@ const BasicTable = () => {
                                                                 <td>{Math.floor(product.exclude_price)}</td>
                                                                 <td>{product.selling_price}</td>
                                                                 <td>{product.retail_price}</td>
+                                                                <td>{product.purchase_type === "International" ? "IN" : "Local"}</td>
                                                                 <td>
                                                                     <UncontrolledDropdown>
                                                                         <DropdownToggle tag="a" className="card-drop">

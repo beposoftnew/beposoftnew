@@ -76,7 +76,6 @@ const BasicTable = () => {
             "Customer Name": order.customer.name,
             "Customer Phone": order.customer.phone,
             "Customer Email": order.customer.email,
-            "Billing Address": `${order.billing_address.address}, ${order.billing_address.city}, ${order.billing_address.state}, ${order.billing_address.zipcode}`,
             "Staff": order.manage_staff,
             "Family": order.family,
             "Total Amount": order.total_amount,
@@ -161,10 +160,6 @@ const BasicTable = () => {
                                                 </tbody>
                                             </Table>
                                         )}
-                                    </div>
-                                    <div className="d-flex justify-content-between mt-3">
-                                        <Button disabled={!prevPage} onClick={() => fetchOrders(prevPage)}>Previous</Button>
-                                        <Button disabled={!nextPage} onClick={() => fetchOrders(nextPage)}>Next</Button>
                                     </div>
                                 </CardBody>
                             </Card>

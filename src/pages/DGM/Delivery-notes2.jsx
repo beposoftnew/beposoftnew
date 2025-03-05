@@ -11,15 +11,13 @@ const AverageAmountReport = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await axios.get(`${import.meta.env.VITE_APP_KEY}orders/`, {
+                const response = await axios.get(`${import.meta.env.VITE_APP_KEY}warehouse/get/`, {
                     headers: { Authorization: `Bearer ${token}` },
                 });
-
-                // Extract warehouse data from all orders
                 let warehouses = [];
-                response.data.forEach(order => {
-                    if (Array.isArray(order.warehouse) && order.warehouse.length > 0) {
-                        warehouses = warehouses.concat(order.warehouse);
+                response?.data?.results.forEach(order => {
+                    if (Array.isArray(order.warehouses) && order.warehouses.length > 0) {
+                        warehouses = warehouses.concat(order.warehouses);
                     }
                 });
 
@@ -31,6 +29,10 @@ const AverageAmountReport = () => {
 
         fetchData();
     }, []);
+
+
+
+    console.log("warehouse detialssss", warehouseData);
 
     // Function to calculate average amount for each parcel_service based on selected date
     const calculateAverageAmount = () => {
