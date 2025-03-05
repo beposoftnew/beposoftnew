@@ -171,7 +171,7 @@ const Emi = () => {
                                     <Col md={4}>
 
                                     <div className="mb-3">
-                                            <Label>startDate</Label>
+                                            <Label>end Date</Label>
                                             <Input
                                                 type="Date"
                                                 name="enddate"

@@ -15,6 +15,7 @@ const FormLayouts = () => {
     const [successMessage, setSuccessMessage] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
     const [payment, setPayment] = useState('');
+    const [EmiDetails, setEmiDetails] = useState("");
 
 
     useEffect(() => {
@@ -44,7 +45,12 @@ const FormLayouts = () => {
                 });
                 setStaffs(staffResponse.data.data);
 
-
+                const fetchEmi = await axios.get(`${import.meta.env.VITE_APP_IMAGE}/apis/emi/`, {
+                    headers:{
+                        'Authorization': `Bearer ${token}`,
+                    }
+                })
+                setEmiDetails(fetchEmi.data.data);
             } catch (error) {
                 console.error("Error fetching data:", error);
                 alert("An error occurred while fetching the data.");
@@ -127,6 +133,11 @@ const FormLayouts = () => {
                 is: (val) => val !== "expenses",
                 then: (schema) => schema.required("Quantity is required").integer("Quantity must be an integer"),
             }),
+
+            loan: Yup.number().when("purpose_of_payment", {
+                is: "emi",
+                then: (schema) => schema.required("Loan is required").integer("Loan ID must be an integer"),
+            }),
         }),
         
 
@@ -162,6 +173,8 @@ const FormLayouts = () => {
         }
         
     });
+
+    console.log("emi detailsss", EmiDetails);
 
 
     return (
@@ -347,6 +360,36 @@ const FormLayouts = () => {
                                                         <FormFeedback type="invalid">{formik.errors.purpose_of_payment}</FormFeedback>
                                                     ) : null}
                                                 </div>
+                                                {formik.values.purpose_of_payment === "emi" && (
+                                                <Col lg={4}>
+                                                    <div className="mb-3">
+                                                        <Label htmlFor="formrow-loan">Select EMI</Label>
+                                                        <Input
+                                                            type="select"
+                                                            name="loan"
+                                                            id="formrow-loan"
+                                                            className="form-control"
+                                                            value={formik.values.loan}
+                                                            onChange={formik.handleChange}
+                                                            onBlur={formik.handleBlur}
+                                                            invalid={formik.touched.loan && formik.errors.loan}
+                                                        >
+                                                            <option value="">Select EMI</option>
+                                                        {EmiDetails && EmiDetails.length > 0 ? (
+                                                            EmiDetails.map((emi) => (
+                                                                <option key={emi.id} value={emi.id}>{emi.emi_name}</option>
+                                                            ))
+                                                        ) : (
+                                                            <option disabled>Loading EMI details...</option>
+                                                        )}
+
+                                                        </Input>
+                                                        {formik.errors.loan && formik.touched.loan ? (
+                                                            <FormFeedback type="invalid">{formik.errors.loan}</FormFeedback>
+                                                        ) : null}
+                                                    </div>
+                                                </Col>
+                                            )}
                                             </Col>
 
                                             <Col lg={4}>

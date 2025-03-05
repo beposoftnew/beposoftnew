@@ -1,16 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
-import {
-    Table,
-    Row,
-    Col,
-    Card,
-    CardBody,
-    CardTitle,
-} from "reactstrap";
-import { useStore } from "react-redux";
-import { toUpper } from "lodash";
+
 
 
 const EmiTotalInfo = () => {

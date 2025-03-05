@@ -18,6 +18,8 @@ import { FaUserTie } from "react-icons/fa";
 import { BiCheckDouble } from "react-icons/bi";
 import { BsArrowRightSquareFill } from "react-icons/bs";
 import { LuCircleCheckBig } from "react-icons/lu";
+import { GiBassetHoundHead } from "react-icons/gi";
+import { MdOutlineVideogameAsset } from "react-icons/md";
 
 
 
@@ -672,6 +674,31 @@ useEffect(() => {
       
       
     ): null}  
+
+{role === 'ADMIN' || role === 'ACCOUNTS' || role === 'IT' ? (
+      <li>
+        <Link to="#" >
+                  <GiBassetHoundHead size={20} style={{ marginRight: '8px' }} />
+                  <span>{props.t("Compony Asset Information")}</span>
+                </Link>
+
+                <ul>
+                  <li>
+                  <Link to="/profile/asset/" >
+                  <MdOutlineVideogameAsset size={20} style={{ marginRight: '8px' }} />
+                  <span>{props.t("Assets")}</span>
+                </Link>
+
+                  </li>
+                  <Link to="/profile/liability/" >
+                  <LuCircleCheckBig size={20} style={{ marginRight: '8px' }} />
+                  <span>{props.t("Liability Information")}</span>
+                </Link>
+                </ul>
+      </li>
+      
+      
+    ): null} 
 
           </ul>
         </div>

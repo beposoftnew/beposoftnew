@@ -55,6 +55,8 @@ import Login from "../pages/Authentication/Login";
 import Logout from "../pages/Authentication/Logout";
 import Register from "../pages/Authentication/Register";
 import ForgetPwd from "../pages/Authentication/ForgetPassword";
+import AssetsMangement from "../pages/Assets/Asset";
+import LibalityManagement from "../pages/Assets/Liability";
 
 // //  // Inner Authentication
 import Login1 from "../pages/AuthenticationInner/Login";
@@ -370,6 +372,8 @@ const authProtectedRoutes = [
   { path: "/add-emi/", component: <Emi /> },
   { path: "/emi-report/", component: <EmiDetails /> },
   { path: "/emi-fulldetails/:id/", component: <EmiTotalInfo /> },
+  { path: "/profile/asset/", component: <AssetsMangement/> },
+  { path: "/profile/liability/", component: <LibalityManagement/> },
 
 
 
