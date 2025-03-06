@@ -34,7 +34,7 @@ const FormLayouts = () => {
     };
     
     const downloadDeliveryNote = () => {
-        window.open(`${import.meta.env.VITE_APP_IMAGE}/addresslabel/${id}/`, "_blank");
+        window.open(`${import.meta.env.VITE_APP_IMAGE}/deliverynote/${id}/`, "_blank");
     };
     
 
