@@ -124,7 +124,7 @@ const Movement = () => {
                                 <th>Shipped Date</th>
                                 <th>Packed By</th>
                                 <th>Verified By</th>
-                                <th>Approved By</th>
+                                <th>Final Conformation</th>
                                 <th>Actual Weight</th>
                                 <th>Parcel Amount (₹)</th>
                                 <th>Post Office Date</th>

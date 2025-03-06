@@ -592,6 +592,9 @@ useEffect(() => {
         <li>
           <Link to="/expense/list/">{props.t("Expenses")}</Link>
         </li>
+        <li>
+          <Link to="/expense/add-category/">{props.t("Add category")}</Link>
+        </li>
       </ul>
     </li>
 

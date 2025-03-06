@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom"; 
+import { Navigate, useParams } from "react-router-dom"; 
 import {
     Card,
     Col,
@@ -9,11 +9,13 @@ import {
     CardTitle,
     Label,
     Input,
-    Table 
+    Table ,
+    Button,
 } from "reactstrap";
 import axios from "axios"
 import PackingInformation from "./Packing-Information"
 import ShippingInformation from "./Shipping-Information"
+import { useNavigate } from "react-router-dom";
 
 
 import Breadcrumbs from "../../components/Common/Breadcrumb";
@@ -25,6 +27,16 @@ const FormLayouts = () => {
     const [orderData, setOrderData] = useState(null); 
     const [loading, setLoading] = useState(true);
     const token = localStorage.getItem('token');
+    const navigate = useNavigate();
+
+    const downloadShippingAddress = () => {
+        window.open(`${import.meta.env.VITE_APP_IMAGE}/shippinglabel/${id}/`, "_blank");
+    };
+    
+    const downloadDeliveryNote = () => {
+        window.open(`${import.meta.env.VITE_APP_IMAGE}/addresslabel/${id}/`, "_blank");
+    };
+    
 
     useEffect(() => {
         const fetchOrderData = async () => {
@@ -201,6 +213,15 @@ const FormLayouts = () => {
                                 </CardBody>
                             <PackingInformation/>
                             <ShippingInformation warehouseData={warehouseData} />
+
+                            <CardBody className="text-center">
+                                    <Button color="primary" className="me-3" onClick={downloadShippingAddress}>
+                                        📥 Download Shipping Address
+                                    </Button>
+                                    <Button color="success" onClick={downloadDeliveryNote}>
+                                        📥 Download Delivery Note
+                                    </Button>
+                                </CardBody>
 
 
                             </Card>

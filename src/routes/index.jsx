@@ -178,6 +178,7 @@ import UiUtilities from "../pages/Ui/UiUtilities";
 import StaffTable from "../pages/Staff/StaffTable";
 import StaffForm  from "../pages/Staff/RegisterStaff";
 import StaffEdit from "../pages/Staff/StaffUpdate";
+import CategoryTable from "../pages/Expense/Addcategory";
 
 // Staffs
 import CustomerTable from "../pages/Customers/customerTable";
@@ -535,6 +536,7 @@ const authProtectedRoutes = [
   { path: "/bank/bankmodule", component: <BankModule /> },
   { path: "/add/expense/", component: <AddExpense />},
   { path: "/expense/list/", component: <ExpenseList />},
+  { path: '/expense/add-category/',component: <CategoryTable />},
 
 
   {path: "/sales/reports/",component: <Salesreport />},

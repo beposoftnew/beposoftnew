@@ -16,6 +16,7 @@ const FormLayouts = () => {
     const [errorMessage, setErrorMessage] = useState('');
     const [payment, setPayment] = useState('');
     const [EmiDetails, setEmiDetails] = useState("");
+    const [ category, setCategory] = useState([]);
 
 
     useEffect(() => {
@@ -51,6 +52,16 @@ const FormLayouts = () => {
                     }
                 })
                 setEmiDetails(fetchEmi.data.data);
+
+                const fetchCategory = await axios.get(`${import.meta.env.VITE_APP_IMAGE}/apis/add/assetcategory/`, {
+
+                    headers:{
+                        'Authorization': `Bearer ${token}`,
+                    }
+                })
+                setCategory(fetchCategory.data);
+
+                
             } catch (error) {
                 console.error("Error fetching data:", error);
                 alert("An error occurred while fetching the data.");
@@ -90,9 +101,13 @@ const FormLayouts = () => {
             label: "Travel",
         },
         { 
-            value: "Other assets",
+            value: "Others",
             label: "Others",
-        }
+        },
+        { 
+            value: "Other assets",
+            label: "Others assets",
+        },
     ]
 
     const formik = useFormik({
@@ -133,6 +148,10 @@ const FormLayouts = () => {
                 is: (val) => val !== "expenses",
                 then: (schema) => schema.required("Quantity is required").integer("Quantity must be an integer"),
             }),
+            category: Yup.number().when("asset_types", {
+                is: (val) => val !== "expenses",
+                then: (schema) => schema.required("category is required")
+            }),
 
             loan: Yup.number().when("purpose_of_payment", {
                 is: "emi",
@@ -150,21 +169,44 @@ const FormLayouts = () => {
                 if (values.asset_types === "expenses") {
                     delete formData.name;
                     delete formData.quantity;
+        
+                    // ✅ If purpose_of_payment is "emi", send to expectemi/ API
+                    if (values.purpose_of_payment === "emi") {
+                        await axios.post(
+                            `${import.meta.env.VITE_APP_KEY}expense/add/`,
+                            formData,
+                            {
+                                headers: { 'Authorization': `Bearer ${token}` },
+                            }
+                        );
+                        setSuccessMessage("Expense with EMI submitted successfully!");
+                    } else {
+                        // ✅ Otherwise, send to expense/add/ API
+                        await axios.post(
+                            `${import.meta.env.VITE_APP_KEY}expense/addexpectemi/`,
+                            formData,
+                            {
+                                headers: { 'Authorization': `Bearer ${token}` },
+                            }
+                        );
+                        setSuccessMessage("Expense submitted successfully!");
+                    }
+        
+                } else if (values.asset_types === "assets") {
+                    // ✅ If asset_types is "assets", send only to the assest/ API
+                    await axios.post(
+                        `${import.meta.env.VITE_APP_KEY}assest/`,
+                        formData,
+                        {
+                            headers: { 'Authorization': `Bearer ${token}` },
+                        }
+                    );
+                    setSuccessMessage("Asset submitted successfully!");
                 }
         
-                const response = await axios.post(
-                    `${import.meta.env.VITE_APP_KEY}expense/add/`,
-                    formData,
-                    {
-                        headers: {
-                            'Authorization': `Bearer ${token}`,
-                        },
-                    }
-                );
-        
-                setSuccessMessage("Form submitted successfully!");
                 setErrorMessage('');
                 resetForm();
+                
             } catch (error) {
                 console.error("Error submitting form:", error);
                 setErrorMessage("An error occurred while submitting the form.");
@@ -335,6 +377,35 @@ const FormLayouts = () => {
         ) : null}
     </div>
 </Col>
+<Col lg={4}>
+                                                    <div className="mb-3">
+                                                        <Label htmlFor="formrow-loan">select fetchCategory</Label>
+                                                        <Input
+                                                            type="select"
+                                                            name="category"
+                                                            id="formrow-loan"
+                                                            className="form-control"
+                                                            value={formik.values.category}
+                                                            onChange={formik.handleChange}
+                                                            onBlur={formik.handleBlur}
+                                                            invalid={formik.touched.category && formik.errors.category}
+                                                            disabled={formik.values.asset_types === "expenses"} 
+                                                        >
+                                                            <option value="">Select category</option>
+                                                        {category && category.length > 0 ? (
+                                                            category.map((category) => (
+                                                                <option key={category.id} value={category.id}>{category.category_name}</option>
+                                                            ))
+                                                        ) : (
+                                                            <option disabled>Loading EMI details...</option>
+                                                        )}
+
+                                                        </Input>
+                                                        {formik.errors.loan && formik.touched.loan ? (
+                                                            <FormFeedback type="invalid">{formik.errors.loan}</FormFeedback>
+                                                        ) : null}
+                                                    </div>
+                                                </Col>
 
                                         </Row>
 

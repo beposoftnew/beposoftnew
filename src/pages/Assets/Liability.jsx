@@ -1,49 +1,41 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 
-const LibalityManagement = () => {
-  const [assets, setAssets] = useState([]);
+const LiabilityManagement = () => {
+  const [liabilities, setLiabilities] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
   useEffect(() => {
-    const fetchAssets = async () => {
+    const fetchLiabilities = async () => {
       try {
         const token = localStorage.getItem("token");
-        const response = await axios.get(`${import.meta.env.VITE_APP_IMAGE}/apis/assests/get/`, {
+        const response = await axios.get(`${import.meta.env.VITE_APP_IMAGE}/apis/liability/get/`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
-        setAssets(response.data.assets || []);
+        setLiabilities(response.data.liabilities || []);
       } catch (err) {
-        console.error("Error fetching assets:", err);
-        setError("Failed to load assets");
+        console.error("Error fetching liabilities:", err);
+        setError("Failed to load liabilities");
       } finally {
         setLoading(false);
       }
     };
 
-    fetchAssets();
+    fetchLiabilities();
   }, []);
 
-  // ✅ Calculate total quantity & total price
-  let totalQuantity = 0;
-  let totalPrice = 0;
-
-  assets.forEach((asset) => {
-    const quantity = asset.stock || asset.quantity || 0;
-    const price = parseFloat(asset.landing_cost || asset.amount || 0);
-    totalQuantity += quantity;
-    totalPrice += quantity * price;
-  });
+  // ✅ Calculate total pending amount
+  const totalPendingAmount = liabilities.reduce((acc, liability) => acc + (liability.pending_amount || 0), 0);
 
   return (
     <div className="container mt-4">
-      <h2 className="text-center mb-4">Asset Management</h2>
+      <h2 style={{paddingTop:"50px"}} className="text-center mb-4">Liability Management</h2>
       
       {loading ? (
-        <p className="text-center">Loading assets...</p>
+        <p className="text-center">Loading liabilities...</p>
       ) : error ? (
         <p className="text-danger text-center">{error}</p>
       ) : (
@@ -51,41 +43,30 @@ const LibalityManagement = () => {
           <table className="table table-bordered table-hover">
             <thead className="table-dark">
               <tr>
-                <th>Name</th>
-                <th>Quantity</th>
-                <th>Price (Per Item)</th>
-                <th>Total Price</th>
+                <th>EMI Name</th>
+                <th>Pending Amount</th>
               </tr>
             </thead>
             <tbody>
-              {assets.map((asset, index) => {
-                const quantity = asset.stock || asset.quantity || 0;
-                const price = parseFloat(asset.landing_cost || asset.amount || 0);
-                const total = quantity * price;
-
-                return (
-                  <tr key={index}>
-                    <td>{asset.name}</td>
-                    <td>{quantity}</td>
-                    <td>₹{price.toFixed(2)}</td>
-                    <td>₹{total.toFixed(2)}</td>
-                  </tr>
-                );
-              })}
+              {liabilities.map((liability, index) => (
+                <tr key={index}>
+                  <td>{liability.emi_name}</td>
+                  <td>₹{liability.pending_amount.toFixed(2)}</td>
+                </tr>
+              ))}
             </tbody>
           </table>
         </div>
       )}
 
-      {/* ✅ Show Total only if there are valid values */}
-      {totalQuantity > 0 && totalPrice > 0 && (
+      {/* ✅ Show Total only if there are valid liabilities */}
+      {liabilities.length > 0 && (
         <div className="text-end mt-3">
-          <h5>Total Quantity: <strong>{totalQuantity}</strong></h5>
-          <h5>Total Price: <strong>₹{totalPrice.toFixed(2)}</strong></h5>
+          <h5>Total Pending Amount: <strong>₹{totalPendingAmount.toFixed(2)}</strong></h5>
         </div>
       )}
     </div>
   );
 };
 
-export default LibalityManagement;
+export default LiabilityManagement;
