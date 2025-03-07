@@ -193,7 +193,7 @@ import Bulkcustomers from '../pages/Staff-Customers/Bulkcustomers';
 
 import SupervisorTable from "../pages/Supervisor/supervisors";
 import SupervisorForm from "../pages/Supervisor/supervisor";
-
+import TotalComponyAssets from "../pages/Assets/totalComponyAssets";
 
 import CreateOrder from "../pages/Order/OrderCreate";
 import OrderTable from "../pages/Order/OrderList";
@@ -375,6 +375,7 @@ const authProtectedRoutes = [
   { path: "/emi-fulldetails/:id/", component: <EmiTotalInfo /> },
   { path: "/profile/asset/", component: <AssetsMangement/> },
   { path: "/profile/liability/", component: <LibalityManagement/> },
+  { path : "/profile/total/assets/", component: <TotalComponyAssets/>},
 
 
 

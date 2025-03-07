@@ -417,7 +417,7 @@ const FormLayouts = () => {
                                                     >
                                                         <option value="" disabled>Select a company</option>
                                                         {companys.map((company, index) => (
-                                                            <option key={index} value={company.id}>
+                                                            <option key={index} value={company.name}>
                                                                 {company.name}
                                                             </option>
                                                         ))}

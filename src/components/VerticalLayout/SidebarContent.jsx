@@ -20,6 +20,7 @@ import { BsArrowRightSquareFill } from "react-icons/bs";
 import { LuCircleCheckBig } from "react-icons/lu";
 import { GiBassetHoundHead } from "react-icons/gi";
 import { MdOutlineVideogameAsset } from "react-icons/md";
+import { IoMdInformationCircleOutline } from "react-icons/io";
 
 
 
@@ -693,10 +694,19 @@ useEffect(() => {
                 </Link>
 
                   </li>
+           
                   <Link to="/profile/liability/" >
                   <LuCircleCheckBig size={20} style={{ marginRight: '8px' }} />
                   <span>{props.t("Liability Information")}</span>
                 </Link>
+
+                <li>
+                  <Link to="/profile/total/assets/" >
+                  <IoMdInformationCircleOutline size={20} style={{ marginRight: '8px' }} />
+                  <span>{props.t("compony profile summary")}</span>
+                </Link>
+
+                  </li>
                 </ul>
       </li>
       
