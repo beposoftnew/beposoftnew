@@ -57,6 +57,7 @@ import Register from "../pages/Authentication/Register";
 import ForgetPwd from "../pages/Authentication/ForgetPassword";
 import AssetsMangement from "../pages/Assets/Asset";
 import LibalityManagement from "../pages/Assets/Liability";
+import TotalComponyAssets from "../pages/Assets/TotalComponyAssets";
 
 // //  // Inner Authentication
 import Login1 from "../pages/AuthenticationInner/Login";
@@ -193,7 +194,7 @@ import Bulkcustomers from '../pages/Staff-Customers/Bulkcustomers';
 
 import SupervisorTable from "../pages/Supervisor/supervisors";
 import SupervisorForm from "../pages/Supervisor/supervisor";
-import TotalComponyAssets from "../pages/Assets/totalComponyAssets";
+
 
 import CreateOrder from "../pages/Order/OrderCreate";
 import OrderTable from "../pages/Order/OrderList";
