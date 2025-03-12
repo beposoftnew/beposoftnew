@@ -225,6 +225,7 @@ useEffect(() => {
                   <li>
                     <Link to="/add-staffs">{props.t("Add Staff")}</Link>
                   </li>
+                
                 </ul>
               </li>
 
@@ -318,6 +319,9 @@ useEffect(() => {
                   </li>
                   <li>
                     <Link to="/product/list/">{props.t("Purchase List")}</Link>
+                  </li>
+                  <li>
+                    <Link to="/product/add-excel/">{props.t("Excel upload products")}</Link>
                   </li>
                 </ul>
               </li>
@@ -596,6 +600,9 @@ useEffect(() => {
         <li>
           <Link to="/expense/add-category/">{props.t("Add category")}</Link>
         </li>
+        <li>
+                <Link to="/expense/add-expanse-modal/">{props.t("add expanse type")}</Link>
+                  </li>
       </ul>
     </li>
 

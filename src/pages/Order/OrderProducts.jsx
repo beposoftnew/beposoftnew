@@ -84,7 +84,7 @@ const   FormLayouts = () => {
             manage_staff: "",
             order_date: "",
             company: "",
-            code_charge: "",
+            cod_amount: "",
             shipping_mode: "",
             check: ""
         },
@@ -93,8 +93,7 @@ const   FormLayouts = () => {
             status: Yup.string().required("Please Enter Your Email"),
             manage_staff: Yup.string().required("This field is required"),
             order_date: Yup.string().required("This field is required"),
-            company: Yup.string().required("This field is required"),
-            code_charge: Yup.string().required("This field is required"),
+            cod_amount: Yup.string().required("This field is required"),
             shipping_mode: Yup.string().required("This field is required"),
             check: Yup.string().required("This field is required"),
         }),
@@ -102,27 +101,30 @@ const   FormLayouts = () => {
         onSubmit: async (values) => {
             try {
                 // Calculate the total amount
-                const subtotal = values.items.reduce((sum, item) => {
-                    const itemTotal = item.quantity * (item.rate - item.discount);
-                    return sum + itemTotal;
-                }, 0);
+                // const subtotal = values.items.reduce((sum, item) => {
+                //     const itemTotal = item.quantity * (item.rate - item.discount);
+                //     return sum + itemTotal;
+                // }, 0);
         
-                const totalAmount = subtotal + parseFloat(values.shipping_charge || 0);
+                // const totalAmount = subtotal + parseFloat(values.shipping_charge || 0);
         
                 // Make the PUT request to save data
-                const response = await fetch(`${import.meta.env.VITE_APP_KEY}shipping/${id}/order/`, {
+                const response = await fetch(`${import.meta.env.VITE_APP_KEY}orders/update/${id}/`, {
                     method: "PUT",
                     headers: {
                         Authorization: `Bearer ${localStorage.getItem("token")}`,
                         "Content-Type": "application/json",
                     },
                     body: JSON.stringify({
-                        code_charge: values.code_charge,
+                        cod_amount: values.cod_amount,
                         shipping_mode: values.shipping_mode,
-                        shipping_charge: values.shipping_charge,
-                        total_amount: totalAmount, // Save the total amount
+                        // shipping_charge: values.shipping_charge,
+                        // total_amount: totalAmount, // Save the total amount
                     }),
                 });
+
+
+                console.log("response from update", response);
         
                 if (!response.ok) {
                     throw new Error(`HTTP error! Status: ${response.status}`);
@@ -206,7 +208,7 @@ const   FormLayouts = () => {
                     order_date: data.order.order_date || "",
                     company: data.order.company || "",
                     shipping_mode: data.order.shipping_mode || "",
-                    code_charge: data.order.code_charge || "",
+                    cod_amount: data.order.cod_amount || "",
                     check: data.order.check || false,
                     family: data.order.family || "",
                     shipping_charge: data.order.shipping_charge || "",
@@ -640,20 +642,20 @@ const   FormLayouts = () => {
                                                     <Label htmlFor="formrow-InputZip">COD CHARGE</Label>
                                                     <Input
                                                         type="text"
-                                                        name="code_charge"
+                                                        name="cod_amount"
                                                         className="form-control"
                                                         id="formrow-InputZip"
                                                         placeholder="Enter Your COD charge"
-                                                        value={formik.values.code_charge}
+                                                        value={formik.values.cod_amount}
                                                         onChange={formik.handleChange}
                                                         onBlur={formik.handleBlur}
                                                         invalid={
-                                                            formik.touched.code_charge && formik.errors.code_charge ? true : false
+                                                            formik.touched.cod_amount && formik.errors.cod_amount ? true : false
                                                         }
                                                     />
                                                     {
-                                                        formik.errors.code_charge && formik.touched.code_charge ? (
-                                                            <FormFeedback type="invalid">{formik.errors.code_charge}</FormFeedback>
+                                                        formik.errors.cod_amount && formik.touched.cod_amount ? (
+                                                            <FormFeedback type="invalid">{formik.errors.cod_amount}</FormFeedback>
                                                         ) : null
                                                     }
                                                 </div>

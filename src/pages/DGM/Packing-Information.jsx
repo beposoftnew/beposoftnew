@@ -178,7 +178,7 @@ const FormRepeater = () => {
 
         } catch (error) {
             console.error("Error during form submission:", error.response ? error.response.data : error.message);
-            setErrorMessage("Error during form submission. Please try again.");
+            // setErrorMessage("Error during form submission. Please try again.");
             setSuccessMessage(""); // Clear success message
         }
     };

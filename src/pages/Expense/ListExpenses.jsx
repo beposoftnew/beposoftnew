@@ -9,8 +9,25 @@ const BasicTable = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [startDate, setStartDate] = useState('');
     const [endDate, setEndDate] = useState('');
+    const [ purposeOfPayment, setPurposeOfPayment] = useState([]);
 
     const token = localStorage.getItem('token');
+
+
+    useEffect(() => {
+        const fetchPayments = async () => {
+            try {
+        const fetchPurposeOfPayment = await axios.get(`${import.meta.env.VITE_APP_IMAGE}/apis/add/purpose/`, {
+            headers:{
+                'Authorization': `Bearer ${token}`,
+            }
+        })
+        setPurposeOfPayment(fetchPurposeOfPayment.data);
+    } catch (error) {
+        console.error("Error fetching purpose of payment:", error);
+    }
+    fetchPayments();
+    }},[token]);
 
     useEffect(() => {
         const fetchExpenses = async () => {
@@ -38,7 +55,9 @@ const BasicTable = () => {
         fetchExpenses();
     }, [token]);
 
-    console.log("expenses", expenses);  
+    console.log("expenses", expenses); 
+    
+    console.log("purpose of payments", purposeOfPayment);
 
     useEffect(() => {
         let filteredData = expenses;

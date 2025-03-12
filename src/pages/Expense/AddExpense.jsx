@@ -17,6 +17,7 @@ const FormLayouts = () => {
     const [payment, setPayment] = useState('');
     const [EmiDetails, setEmiDetails] = useState("");
     const [ category, setCategory] = useState([]);
+    const [ purposeOfPayment, setPurposeOfPayment] = useState([]);
 
 
     useEffect(() => {
@@ -61,6 +62,15 @@ const FormLayouts = () => {
                 })
                 setCategory(fetchCategory.data);
 
+                const fetchPurposeOfPayment = await axios.get(`${import.meta.env.VITE_APP_IMAGE}/apis/add/purpose/`, {
+
+                    headers:{
+                        'Authorization': `Bearer ${token}`,
+                    }
+                })
+
+                setPurposeOfPayment(fetchPurposeOfPayment.data);
+
                 
             } catch (error) {
                 console.error("Error fetching data:", error);
@@ -71,44 +81,7 @@ const FormLayouts = () => {
         fetchData();
     }, [token]);
 
-    const  purposeofPayment = [
-        { 
-            value: "water",
-            label: "Water",
-        },
-        { 
-            value: "electricity",
-            label: "Electricity",
-        },
-        { 
-            value: "salary",
-            label: "Salary",
-        },
-        { 
-            value: "emi",
-            label: "EMI",
-        },
-        { 
-            value: "rent",
-            label: "Rent",
-        },
-        { 
-            value: "equipments",
-            label: "Equipments",
-        },
-        { 
-            value: "travel",
-            label: "Travel",
-        },
-        { 
-            value: "Others",
-            label: "Others",
-        },
-        { 
-            value: "Other assets",
-            label: "Others assets",
-        },
-    ]
+  
 
     const formik = useFormik({
         initialValues: {
@@ -121,8 +94,6 @@ const FormLayouts = () => {
             transaction_id: "",
             description: "",
             added_by: "",
-            // name:"",
-            // quantity:"",
             asset_types:""
         },
         validationSchema: Yup.object({
@@ -379,11 +350,11 @@ const FormLayouts = () => {
 </Col>
 <Col lg={4}>
                                                     <div className="mb-3">
-                                                        <Label htmlFor="formrow-loan">select fetchCategory</Label>
+                                                        <Label htmlFor="dddf-loan">select fetchCategory</Label>
                                                         <Input
                                                             type="select"
                                                             name="category"
-                                                            id="formrow-loan"
+                                                            id="ddf-loan"
                                                             className="form-control"
                                                             value={formik.values.category}
                                                             onChange={formik.handleChange}
@@ -397,12 +368,12 @@ const FormLayouts = () => {
                                                                 <option key={category.id} value={category.id}>{category.category_name}</option>
                                                             ))
                                                         ) : (
-                                                            <option disabled>Loading EMI details...</option>
+                                                            <option disabled>Loading category details...</option>
                                                         )}
 
                                                         </Input>
-                                                        {formik.errors.loan && formik.touched.loan ? (
-                                                            <FormFeedback type="invalid">{formik.errors.loan}</FormFeedback>
+                                                        {formik.errors.category && formik.touched.category ? (
+                                                            <FormFeedback type="invalid">{formik.errors.category}</FormFeedback>
                                                         ) : null}
                                                     </div>
                                                 </Col>
@@ -423,8 +394,8 @@ const FormLayouts = () => {
                                                         invalid={formik.touched.purpose_of_payment && formik.errors.purpose_of_payment}
                                                     >
                                                         <option value="">Choose...</option>
-                                                        {purposeofPayment.map((type) => (
-                                                            <option key={type.value} value={type.value}>{type.label}</option>
+                                                        {purposeOfPayment.map((type) => (
+                                                            <option key={type.id} value={type.id}>{type.name}</option>
                                                         ))}
                                                     </select>
                                                     {formik.errors.purpose_of_payment && formik.touched.purpose_of_payment ? (

@@ -24,6 +24,7 @@ import ProjectsGrid from "../pages/Projects/projects-grid";
 import ProjectsList from "../pages/Projects/projects-list";
 import ProjectsOverview from "../pages/Projects/ProjectOverview/projects-overview";
 import ProjectsCreate from "../pages/Projects/projects-create";
+import ExcelOrderCreation from "../pages/Product/ExcelOrderCreation";
 
 // // //Ecommerce Pages
 import EcommerceProducts from "../pages/Ecommerce/EcommerceProducts";
@@ -243,6 +244,7 @@ import ProductUpdate from "../pages/Ecommerce/ProductUpdateForm";
 import Bank from "../pages/Bank/Add-Bank";
 import BankList from "../pages/Bank/Banks";
 import BankModule from "../pages/Bank/BankModule";
+import AddExpanseModal from "../pages/Expense/AddExpanseModal";
 
 
 
@@ -377,6 +379,7 @@ const authProtectedRoutes = [
   { path: "/profile/asset/", component: <AssetsMangement/> },
   { path: "/profile/liability/", component: <LibalityManagement/> },
   { path : "/profile/total/assets/", component: <TotalComponyAssets/>},
+  {path: "/expense/add-expanse-modal/", component: <AddExpanseModal/>},
 
 
 
@@ -402,6 +405,7 @@ const authProtectedRoutes = [
   {path: "/product/:id/Images/",component:<Images />},
   {path: "/add/products/bulk/",component:<BulkProduct />},
   {path: "/warehouse/waitingproducts/",component:<WaitingProducts />},
+
 
 
 
@@ -547,6 +551,7 @@ const authProtectedRoutes = [
   {path: "/credit/sale/", component :<CreditSales />},
   {path: "/credit/sales/report/:date/", component :<CreditOrders />},
   {path: "/product/stock/report/", component :<StockReport />},
+  {path: "/product/add-excel/", component : <ExcelOrderCreation />},
 
 
 

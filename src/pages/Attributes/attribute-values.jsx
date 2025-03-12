@@ -109,6 +109,12 @@ const BasicTable = () => {
         }
     };
 
+
+    const attributeLookup = availableAttributes.reduce((acc, attr) => {
+        acc[attr.id] = attr.name;
+        return acc;
+    }, {});
+
     // Handle Delete Action
     const handleDeleteAttribute = async (attributeId) => {
         try {
@@ -140,6 +146,9 @@ const BasicTable = () => {
     };
 
     document.title = "Basic Tables | Skote - Vite React Admin & Dashboard Template";
+
+
+    console.log("attribute information..:", attributes);
 
     return (
         <React.Fragment>
@@ -174,7 +183,7 @@ const BasicTable = () => {
                                                         attributes.map((attribute, index) => (
                                                             <tr key={index}>
                                                                 <td>{index + 1}</td>
-                                                                <td>{attribute.attribute || "Unnamed Attribute"}</td>
+                                                                <td>{attributeLookup[attribute.attribute] || ""}</td>
                                                                 <td>{attribute.value || "Unnamed value"}</td>
 
                                                                 <td>

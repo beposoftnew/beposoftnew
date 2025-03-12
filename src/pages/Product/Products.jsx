@@ -198,7 +198,7 @@ const BasicTable = () => {
                                                                 <th scope="row">{index + 1}</th>
                                                                 <td>
                                                                 <img
-    src={`${import.meta.env.VITE_APP_IMAGE}/${product.image || (product.images && `${import.meta.env.VITE_APP_IMAGE}/${product.images[0]?.image}`) || 'fallback-image-url'}`}
+    src={`${import.meta.env.VITE_APP_IMAGE}${product.image || (product.images && `${import.meta.env.VITE_APP_IMAGE}/${product.images[0]?.image}`) || 'fallback-image-url'}`}
     alt={product.name}
     style={{ width: "60px", height: "60px", objectFit: "cover", borderRadius: "5px" }}
 />
