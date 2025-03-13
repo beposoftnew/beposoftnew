@@ -111,7 +111,7 @@ const FormLayouts = () => {
 
         onSubmit: async (values, { resetForm }) => {
             try {
-                console.log("Formik Values Before Submission:", values);
+                console.log("FORM FIELDS BEFORE SUBMITING :", values);
         
                 const formData = new FormData();
         
@@ -120,9 +120,11 @@ const FormLayouts = () => {
                         formData.append(key, values[key]); 
                     } else if (key === "allocated_states") {
                         if (values[key].length > 0) {
+                            console.log("key value are greater", key);
                             values[key].forEach(state => formData.append('allocated_states', state)); 
                         } else {
-                            formData.append('allocated_states', ""); // Send an empty value if nothing is selected
+                            formData.append('allocated_states', ""); 
+                            console.log("test phsasee");
                         }
                     } else if (values[key] !== '') {
                         formData.append(key, values[key]);

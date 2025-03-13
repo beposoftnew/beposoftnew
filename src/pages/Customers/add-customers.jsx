@@ -37,7 +37,6 @@ const FormLayouts = () => {
             manager: "",
             city: "",
             commend: "",
-            check: "",
         },
         validationSchema: Yup.object({
             name: Yup.string().required("This field is required"),
@@ -48,7 +47,6 @@ const FormLayouts = () => {
             manager: Yup.string().required("Please select a manager"),
             city: Yup.string().required("City is required"),
             state: Yup.string().required("State is required"),
-            check: Yup.boolean().required("You must check this box"),
         }),
 
         onSubmit: async (values) => {
@@ -422,7 +420,7 @@ const FormLayouts = () => {
 
                                         </Row>
 
-                                        <div className="mb-3">
+                                        {/* <div className="mb-3">
                                             <div className="form-check">
                                                 <Input
                                                     type="checkbox"
@@ -448,7 +446,8 @@ const FormLayouts = () => {
                                                     <FormFeedback type="invalid">{formik.errors.check}</FormFeedback>
                                                 ) : null
                                             }
-                                        </div>
+                                        </div> */}
+                                        
                                         <div className="mb-3">
                                             <button type="submit" className="btn btn-primary w-md" disabled={loading}>
                                                 {loading ? 'Submitting...' : 'Submit'}

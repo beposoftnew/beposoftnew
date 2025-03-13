@@ -36,6 +36,7 @@ const EcommerenceAddProduct = () => {
             size: '',
             image: null,
             groupID: '',
+            landing_cost:'',
         },
         validationSchema: yup.object().shape({
             name: yup.string().required('Please Enter Your Product Name'),
@@ -139,6 +140,8 @@ const EcommerenceAddProduct = () => {
                 });
                 const productData = await response.json();
 
+                console.log("product idd", productData);
+
                 if (response.ok && productData) {
                     formik.setValues({
                         name: productData.data.name || '',
@@ -152,7 +155,9 @@ const EcommerenceAddProduct = () => {
                         stock: productData.data.stock || '',
                         color: productData.data.color || '',
                         size: productData.data.size || '',
-                        groupID: productData.data.groupID || ''
+                        groupID: productData.data.groupID || '',
+                        landing_cost: productData.data.landing_cost || '',
+                        retail_price: productData.data.retail_price || ''
                     });
                     if (productData.data.image) {
                         setImagePreview(productData.data.image);
@@ -175,6 +180,16 @@ const EcommerenceAddProduct = () => {
         setSelectedFiles(files);
         setImagePreview(URL.createObjectURL(file));
     };
+
+
+
+    useEffect(() => {
+        const { purchase_rate, tax } = formik.values;
+        const rate = parseFloat(purchase_rate) || 0;
+        const taxValue = parseFloat(tax) || 0;
+        const calculatedLandingCost = rate + (rate * taxValue / 100);
+        formik.setFieldValue("landing_cost", calculatedLandingCost.toFixed(2)); 
+    }, [formik.values.purchase_rate, formik.values.tax]);
 
     return (
         <React.Fragment>
@@ -217,7 +232,7 @@ const EcommerenceAddProduct = () => {
                                             }
                                         </div>
                                         <Row>
-                                            <Col md={4}>
+                                            <Col md={3}>
                                                 <div className="mb-3">
                                                     <Label htmlFor="formrow-hsn_code-Input">Product HSN code</Label>
                                                     <Input
@@ -241,7 +256,7 @@ const EcommerenceAddProduct = () => {
                                                 </div>
                                             </Col>
 
-                                            <Col lg={4}>
+                                            <Col lg={3}>
                                                 <div className="mb-3">
                                                     <Label htmlFor="formrow-InputState">Type</Label>
                                                     <select
@@ -264,7 +279,7 @@ const EcommerenceAddProduct = () => {
                                                 </div>
                                             </Col>
 
-                                            <Col lg={4}>
+                                            <Col lg={3}>
                                                 <div className="mb-3">
                                                     <Label htmlFor="formrow-Inputunit">Unit</Label>
                                                     <select
@@ -290,9 +305,7 @@ const EcommerenceAddProduct = () => {
                                                     )}
                                                 </div>
                                             </Col>
-                                        </Row>
 
-                                        <Row>
                                             <Col lg={3}>
                                                 <div className="mb-3">
                                                     <Label htmlFor="formrow-Inputpurchase_rate">Purchase Rate</Label>
@@ -316,10 +329,62 @@ const EcommerenceAddProduct = () => {
                                                     }
                                                 </div>
                                             </Col>
+                                         
+                                        </Row>
+
+                                        <Row>
+                                            <Col lg={3}>
+                                                <div className="mb-3">
+                                                    <Label htmlFor="formrow-Inputpurchase_rate">Tax</Label>
+                                                    <Input
+                                                        type="number"
+                                                        name="tax"
+                                                        className="form-control"
+                                                        id="formrow-Inputpurchase_rate"
+                                                        placeholder="Enter tax"
+                                                        value={formik.values.tax}
+                                                        onChange={formik.handleChange}
+                                                        onBlur={formik.handleBlur}
+                                                        invalid={
+                                                            formik.touched.tax && formik.errors.tax ? true : false
+                                                        }
+                                                    />
+                                                    {
+                                                        formik.errors.tax && formik.touched.tax ? (
+                                                            <FormFeedback type="invalid">{formik.errors.tax}</FormFeedback>
+                                                        ) : null
+                                                    }
+                                                </div>
+                                            </Col>
 
                                             <Col lg={3}>
                                                 <div className="mb-3">
-                                                    <Label htmlFor="formrow-InputCity">Selling Price</Label>
+                                                    <Label htmlFor="formrow-InputCity">Landing Cost</Label>
+                                                    <Input
+                                                        type="number"
+                                                        name="landing_cost"
+                                                        className="form-control"
+                                                        id="formrow-Inputtax"
+                                                        placeholder="Enter Your Selling Price"
+                                                        value={formik.values?.landing_cost || ''}
+                                                        onChange={formik.handleChange}
+                                                        onBlur={formik.handleBlur}
+                                                        invalid={
+                                                            formik.touched.landing_cost && formik.errors.landing_cost ? true : false
+                                                        }
+                                                    />
+                                                    {
+                                                        formik.errors.landing_cost && formik.touched.landing_cost ? (
+                                                            <FormFeedback type="invalid">{formik.errors.landing_cost}</FormFeedback>
+                                                        ) : null
+                                                    }
+                                                </div>
+                                            </Col>
+
+                                            <Col lg={3}>
+
+                                                <div className="mb-3">
+                                                    <Label htmlFor="formrow-InputCity">wholeSale rate</Label>
                                                     <Input
                                                         type="text"
                                                         name="selling_price"
@@ -340,49 +405,25 @@ const EcommerenceAddProduct = () => {
                                                     }
                                                 </div>
                                             </Col>
-
                                             <Col lg={3}>
                                                 <div className="mb-3">
-                                                    <Label htmlFor="formrow-InputCity">Stock</Label>
+                                                    <Label htmlFor="formrow-InputCity">Retail Price</Label>
                                                     <Input
                                                         type="text"
-                                                        name="stock"
-                                                        className="form-control"
-                                                        id="formrow-Inputtax"
-                                                        placeholder="Enter Your  Stock"
-                                                        value={formik.values.stock}
-                                                        onChange={formik.handleChange}
-                                                        onBlur={formik.handleBlur}
-                                                        invalid={
-                                                            formik.touched.stock && formik.errors.stock ? true : false
-                                                        }
-                                                    />
-                                                    {
-                                                        formik.errors.stock && formik.touched.stock ? (
-                                                            <FormFeedback type="invalid">{formik.errors.stock}</FormFeedback>
-                                                        ) : null
-                                                    }
-                                                </div>
-                                            </Col>
-                                            <Col lg={3}>
-                                                <div className="mb-3">
-                                                    <Label htmlFor="formrow-InputCity">Color</Label>
-                                                    <Input
-                                                        type="text"
-                                                        name="color"
+                                                        name="retail_price"
                                                         className="form-control"
                                                         id="formrow-Inputtax"
                                                         placeholder="Enter Your Color"
-                                                        value={formik.values.color}
+                                                        value={formik.values.retail_price}
                                                         onChange={formik.handleChange}
                                                         onBlur={formik.handleBlur}
                                                         invalid={
-                                                            formik.touched.color && formik.errors.color ? true : false
+                                                            formik.touched.retail_price && formik.errors.retail_price ? true : false
                                                         }
                                                     />
                                                     {
-                                                        formik.errors.color && formik.touched.color ? (
-                                                            <FormFeedback type="invalid">{formik.errors.color}</FormFeedback>
+                                                        formik.errors.retail_price && formik.touched.retail_price ? (
+                                                            <FormFeedback type="invalid">{formik.errors.retail_price}</FormFeedback>
                                                         ) : null
                                                     }
                                                 </div>
@@ -427,6 +468,7 @@ const EcommerenceAddProduct = () => {
                                                         value={formik.values.groupID}
                                                         onChange={formik.handleChange}
                                                         onBlur={formik.handleBlur}
+                                                        readOnly
                                                         invalid={
                                                             formik.touched.groupID && formik.errors.groupID ? true : false
                                                         }
@@ -439,38 +481,101 @@ const EcommerenceAddProduct = () => {
                                                 </div>
                                             </Col>
                                             <Col lg={3}>
-                                                <div className="mb-3">
-                                                    <Label htmlFor="formrow-InputState">Family</Label>
-                                                    <select
-                                                        name="family"
-                                                        id="formrow-InputState"
+                                                   <div className="mb-3">
+                                                    <Label htmlFor="formrow-InputCity">Stock</Label>
+                                                    <Input
+                                                        type="text"
+                                                        name="stock"
                                                         className="form-control"
-                                                        value={formik.values.family || []} // Ensure value is an array
-                                                        onChange={(e) => {
-                                                            const options = Array.from(e.target.selectedOptions, (option) => option.value);
-                                                            formik.setFieldValue('family', options); // Update Formik value with selected options
-                                                        }}
+                                                        id="formrow-Inputtax"
+                                                        placeholder="Enter Your  Stock"
+                                                        value={formik.values.stock}
+                                                        onChange={formik.handleChange}
                                                         onBlur={formik.handleBlur}
-                                                        multiple // Enable multiple selections
-                                                    >
-                                                        <option disabled value="">
-                                                            Select Family
-                                                        </option>
-                                                        {families.map((family) => (
-                                                            <option key={family.id} value={family.id}>
-                                                                {family.name}
-                                                            </option>
-                                                        ))}
-                                                    </select>
-                                                    {formik.errors.family && formik.touched.family ? (
-                                                        <span className="text-danger">{formik.errors.family}</span>
-                                                    ) : null}
+                                                        invalid={
+                                                            formik.touched.stock && formik.errors.stock ? true : false
+                                                        }
+                                                    />
+                                                    {
+                                                        formik.errors.stock && formik.touched.stock ? (
+                                                            <FormFeedback type="invalid">{formik.errors.stock}</FormFeedback>
+                                                        ) : null
+                                                    }
                                                 </div>
                                             </Col>
 
 
                                             <Col lg={3}>
-    <div className="mb-3">
+<div className="mb-3">
+                                                    <Label htmlFor="formrow-InputCity">Color</Label>
+                                                    <Input
+                                                        type="text"
+                                                        name="color"
+                                                        className="form-control"
+                                                        id="formrow-Inputtax"
+                                                        placeholder="Enter Your Color"
+                                                        value={formik.values.color}
+                                                        onChange={formik.handleChange}
+                                                        onBlur={formik.handleBlur}
+                                                        invalid={
+                                                            formik.touched.color && formik.errors.color ? true : false
+                                                        }
+                                                    />
+                                                    {
+                                                        formik.errors.color && formik.touched.color ? (
+                                                            <FormFeedback type="invalid">{formik.errors.color}</FormFeedback>
+                                                        ) : null
+                                                    }
+                                                </div>
+</Col>
+
+                                        </Row>
+
+                                        <Row>
+                                        <Col lg={3}>
+                                        <div className="mb-3">
+    <Label htmlFor="formrow-InputState">Family</Label>
+    <select
+    name="family"
+    id="formrow-InputState"
+    className="form-control"
+    value={formik.values.family.map(String)} // Convert values to string
+    onChange={(e) => {
+        const options = Array.from(e.target.selectedOptions, (option) => option.value);
+        formik.setFieldValue('family', options); // Update Formik values dynamically
+    }}
+    onBlur={formik.handleBlur}
+    multiple // Enable multiple selections
+>
+    {/* Default Placeholder */}
+    {formik.values.family.length === 0 && (
+        <option disabled value="">
+            Select Family
+        </option>
+    )}
+
+    {/* Render Family Options & Ensure Pre-selection */}
+    {families.map((family) => (
+        <option 
+            key={family.id} 
+            value={family.id.toString()} 
+            selected={formik.values.family.includes(family.id.toString())} // Pre-select matching family IDs
+        >
+            {family.name}
+        </option>
+    ))}
+</select>
+
+
+    {/* Validation Error Message */}
+    {formik.errors.family && formik.touched.family ? (
+        <span className="text-danger">{formik.errors.family}</span>
+    ) : null}
+</div>     
+</Col>
+                                            <Col lg={3}>
+
+                                            <div className="mb-3">
         <Label htmlFor="formrow-InputImage">Upload Image</Label>
         <Input
             type="file"
@@ -506,14 +611,14 @@ const EcommerenceAddProduct = () => {
     {imagePreview && (
         <div className="image-preview mt-2">
             <img 
-                src={imagePreview}  // Directly use the base64 preview
+                src={`${import.meta.env.VITE_APP_IMAGE}${imagePreview}`}  
                 alt="Preview" 
                 style={{ width: '50%', height: 'auto', borderRadius: '5px', border: '1px solid #ddd', padding: '5px' }} 
             />
         </div>
     )}
-</Col>
-
+                                                
+                                            </Col>
                                         </Row>
                                         <div className="d-flex flex-wrap gap-2">
                                             <Button type="submit" color="primary">Save Changes</Button>

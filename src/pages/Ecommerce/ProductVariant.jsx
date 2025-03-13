@@ -10,6 +10,7 @@ const VariantProductCreateForm = () => {
     document.title = "Beposoft | Product Variant";
     const { type, id } = useParams();
     const navigate = useNavigate();
+    const token = localStorage.getItem('token');
 
     const [products, setProducts] = useState([]);
     const [stockData, setStockData] = useState([]);
@@ -45,12 +46,6 @@ const VariantProductCreateForm = () => {
                     }
                 });
 
-                if (response.status === 401) {
-                    localStorage.removeItem('token');
-                    navigate('/login');
-                    return;
-                }
-
                 const data = await response.json();
                 const products = Array.isArray(data) ? data : data.data || [];
                 setProducts(products);
@@ -67,7 +62,7 @@ const VariantProductCreateForm = () => {
         };
 
         fetchProducts();
-    }, [id, navigate]);
+    }, [token]);
 
     useEffect(() => {
         const fetchAttributes = async () => {
@@ -105,7 +100,7 @@ const VariantProductCreateForm = () => {
         };
 
         fetchAttributes();
-    }, [navigate]);
+    }, [token]);
 
 
     const handleDelete = async (id) => {
@@ -147,13 +142,7 @@ const VariantProductCreateForm = () => {
                     'Authorization': `Bearer ${localStorage.getItem('token')}`,
                     'Content-Type': 'application/json'
                 }
-            });
-
-            if (response.status === 401) {
-                localStorage.removeItem('token');
-                navigate('/login');
-                return;
-            }
+            })
 
             const data = await response.json();
             if (Array.isArray(data)) {
@@ -170,7 +159,7 @@ const VariantProductCreateForm = () => {
         } catch (err) {
             setError(err.message || "An error occurred while fetching attribute values");
         }
-    }, [navigate]);
+    }, [token]);
 
 
     const handleAttributeNameChange = async (index, selectedOption) => {
@@ -449,7 +438,7 @@ const VariantProductCreateForm = () => {
                                                                         src={ `${import.meta.env.VITE_APP_IMAGE}/${item.image}`}
                                                                         alt={item.name || 'Image not available'}
                                                                         style={{ width: '50px', height: '50px', objectFit: 'cover' }}
-                                                                        onError={(e) => { e.target.src = '/path/to/placeholder.png'; }}
+                                                                        // onError={(e) => { e.target.src = '/path/to/placeholder.png'; }}
                                                                     />
                                                                 </td>
 
