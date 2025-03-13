@@ -435,7 +435,7 @@ const VariantProductCreateForm = () => {
 
                                                                 <td>
                                                                     <img
-                                                                        src={ `${import.meta.env.VITE_APP_IMAGE}/${item.image}`}
+                                                                        src={ `${import.meta.env.VITE_APP_IMAGE}${item.image}`}
                                                                         alt={item.name || 'Image not available'}
                                                                         style={{ width: '50px', height: '50px', objectFit: 'cover' }}
                                                                         // onError={(e) => { e.target.src = '/path/to/placeholder.png'; }}

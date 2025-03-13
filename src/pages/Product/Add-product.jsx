@@ -16,6 +16,7 @@
         const [warehouseDetails, setWarehouseDetails] = useState([]);
         const token = localStorage.getItem('token');
         const [isLoading, setIsLoading] = useState(false);
+        const [imagePreview, setImagePreview] = useState("");
 
         const UNIT_TYPES = [
             { value: 'NOS', label: 'NOS' },
@@ -49,6 +50,7 @@
                 retail_price: "",
                 landing_cost: "",
                 purchase_type: "International",
+                image: null,
             },
             validationSchema: Yup.object({
                 name: Yup.string().required("This field is required"),
@@ -65,32 +67,40 @@
             }),
        
             onSubmit: async (values, { resetForm }) => {
-                const payload = {
-                    ...values,
-                    type: values.type || "variant"
-                };
-                console.log("Final Payload to Backend:", payload);
+                const formData = new FormData();
+              
+                Object.entries(values).forEach(([key, value]) => {
+                  if (key === 'family') {
+                    value.forEach(item => formData.append('family', item));
+                  } else if (key === 'image' && value) {
+                    formData.append('image', value);
+                  } else {
+                    formData.append(key, value);
+                  }
+                });
+              
                 setIsLoading(true);
-                
+              
                 try {
-                    const response = await axios.post(`${import.meta.env.VITE_APP_KEY}add/product/`, payload, {
-                        headers: {
-                            'Authorization': `Bearer ${token}`,
-                            "Content-Type": "application/json"
-                        }
-                    });
-                    
-                    setSuccessMessage("Form submitted successfully!");
-                    console.log('Form submitted successfully:', response.data);
-                    setIsLoading(false);
-                    
-                    resetForm(); // **Clears the form after successful submission**
+                  const response = await axios.post(`${import.meta.env.VITE_APP_KEY}add/product/`, formData, {
+                    headers: {
+                      'Content-Type': 'multipart/form-data',
+                      'Authorization': `Bearer ${token}`,
+                    },
+                  });
+              
+                  setSuccessMessage("Form submitted successfully.");
+                  setErrorMessage('');
+                  formik.resetForm();
                 } catch (error) {
-                    setErrorMessage("Error submitting form. Please try again.");
-                    console.error('Error submitting form:', error);
-                    setIsLoading(false);
+                  console.error('Error submitting form:', error);
+                  setErrorMessage("Error submitting form. Please try again.");
+                  setSuccessMessage('');
+                } finally {
+                  setIsLoading(false);
                 }
-            }
+              }
+              
             
             
         
@@ -450,6 +460,55 @@
                                                         )}
                                                     </div>
                                                 </Col>
+                                            </Row>
+                                            <Row>
+                                            <Col lg={3}>
+                                            <div className="mb-3">
+        <Label htmlFor="formrow-InputImage">Upload Image</Label>
+        <Input
+            type="file"
+            name="image"
+            className={`form-control ${formik.touched.image && formik.errors.image ? 'is-invalid' : ''}`}
+            id="formrow-InputImage"
+            onChange={(event) => {
+                const file = event.currentTarget.files[0];
+
+                if (file) {
+                    formik.setFieldValue("image", file);
+
+                    // Ensure FileReader reads the image correctly
+                    const reader = new FileReader();
+                    reader.onload = () => {
+                        setImagePreview(reader.result); // Set preview image
+                    };
+                    reader.onerror = (error) => {
+                        console.error("Error reading file:", error);
+                    };
+                    reader.readAsDataURL(file);
+                }
+            }}
+            onBlur={formik.handleBlur}
+            accept="image/*"
+        />
+        {formik.errors.image && formik.touched.image && (
+            <FormFeedback className="d-block">{formik.errors.image}</FormFeedback>
+        )}
+    </div>
+
+    {/* Display Image Preview */}
+    {imagePreview && (
+        <div className="image-preview mt-2">
+            <img 
+                src={`${import.meta.env.VITE_APP_IMAGE}${imagePreview}`}  
+                alt="Preview" 
+                style={{ width: '50%', height: 'auto', borderRadius: '5px', border: '1px solid #ddd', padding: '5px' }} 
+            />
+        </div>
+    )}
+                                                
+                                            </Col>
+                                                
+                                            
                                             </Row>
 
                                             <button type="submit" className="btn btn-primary w-md">

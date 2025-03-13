@@ -573,8 +573,7 @@ const EcommerenceAddProduct = () => {
     ) : null}
 </div>     
 </Col>
-                                            <Col lg={3}>
-
+         <Col lg={3}>
                                             <div className="mb-3">
         <Label htmlFor="formrow-InputImage">Upload Image</Label>
         <Input
