@@ -1,18 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from 'react-router-dom';
-import { useContext } from "react";
 import {
-    Row,
-    Col,
-    Card,
-    CardBody,
-    Form,
-    Label,
-    Input,
-    Button,
-    Container,
-    FormGroup,
-    FormFeedback,
+    Row, Col, Card, CardBody, Form, Label, Input, Button, Container, FormGroup, Modal, ModalBody, ModalFooter
 } from "reactstrap";
 import axios from "axios";
 
@@ -22,7 +11,7 @@ const FormRepeater = () => {
     const [formRows, setFormRows] = useState([
         {
             id: 1,
-            box: "Box 1",  // Start with Box 1 by default
+            box: "Box 1",
             weight: "",
             length: "",
             breadth: "",
@@ -30,82 +19,52 @@ const FormRepeater = () => {
             image: null,
             packed_by: "",
             parcel_service: "",
-            shipped_date:"",
-            status:"",
+            shipped_date: "",
+            status: "",
         }
     ]);
     const [successMessage, setSuccessMessage] = useState("");
     const [errorMessage, setErrorMessage] = useState("");
+    const [showSuccessModal, setShowSuccessModal] = useState(false); // Toggle success modal
     const token = localStorage.getItem('token');
     const [staffs, setStaffs] = useState([]);
     const { id } = useParams();
 
-
-
-    console.log("iddddd", id);
-
-    const onAddFormRow = () => {
-        const newRow = {
-            id: formRows.length + 1,
-            box: `Box ${formRows.length + 1}`, // Automatically assign box name based on row count
-            weight: "",
-            length: "",
-            breadth: "",
-            height: "",
-            image: null,
-            packed_by: "",
-            shipped_date:"",
-            status:"",
-        };
-        setFormRows([...formRows, newRow]);
-    };
-
-    const onDeleteFormRow = (rowId) => {
-        const updatedRows = formRows.filter((row) => row.id !== rowId);
-        setFormRows(updatedRows);
-    };
-
-    const handleInputChange = (rowId, name, value) => {
-        const updatedRows = formRows.map(row => {
-            if (row.id === rowId) {
-                return { ...row, [name]: value };
-            }
-            return row;
-        });
-        setFormRows(updatedRows);
-    };
-
-    const handleFileChange = (rowId, file) => {
-        const updatedRows = formRows.map(row => {
-            if (row.id === rowId) {
-                return { ...row, image: file };
-            }
-            return row;
-        });
-        setFormRows(updatedRows);
+    // ✅ Fetch Staff Data
+    const fetchData = async () => {
+        try {
+            const response = await axios.get(`${import.meta.env.VITE_APP_KEY}staffs/`, {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            setStaffs(response.data.data);
+        } catch (error) {
+            console.error("Error fetching staffs:", error);
+        }
     };
 
     useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const response = await axios.get(`${import.meta.env.VITE_APP_KEY}staffs/`,{
-                    headers: {
-                        'Authorization': `Bearer ${token}`
-                    }
-                });
-                setStaffs(response.data.data);
-            } catch (error) {
-                console.error("Error fetching staffs:", error);
-            }
-        };
-
         fetchData();
     }, [token]);
 
-    // Handle form submission
+    const onAddFormRow = () => {
+        setFormRows([...formRows, { id: formRows.length + 1, box: `Box ${formRows.length + 1}`, weight: "", length: "", breadth: "", height: "", image: null, packed_by: "", shipped_date: "", status: "" }]);
+    };
+
+    const onDeleteFormRow = (rowId) => {
+        setFormRows(formRows.filter(row => row.id !== rowId));
+    };
+
+    const handleInputChange = (rowId, name, value) => {
+        setFormRows(formRows.map(row => row.id === rowId ? { ...row, [name]: value } : row));
+    };
+
+    const handleFileChange = (rowId, file) => {
+        setFormRows(formRows.map(row => row.id === rowId ? { ...row, image: file } : row));
+    };
+
+    // ✅ Handle form submission with success toggle
     const handleSubmit = async (e) => {
         e.preventDefault();
-
         try {
             const formDataList = formRows.map((row) => {
                 const formData = new FormData();
@@ -124,36 +83,17 @@ const FormRepeater = () => {
                 return formData;
             });
 
-            // Debugging the formData
-            formDataList.forEach((formData, index) => {
-                console.log(`FormData #${index + 1}:`);
-                for (let [key, value] of formData.entries()) {
-                    console.log(`${key}:`, value);
-                }
-            });
-
-            // Proceed with sending the requests
             const responsePromises = formDataList.map((formData) =>
-                axios.post(
-                    `${import.meta.env.VITE_APP_KEY}warehouse/data/`,
-                    formData,
-                    {
-                        headers: {
-                            "Content-Type": "multipart/form-data",
-                            "Authorization": `Bearer ${token}`,
-                        },
-                    }
-                )
+                axios.post(`${import.meta.env.VITE_APP_KEY}warehouse/data/`, formData, {
+                    headers: { "Content-Type": "multipart/form-data", "Authorization": `Bearer ${token}` },
+                })
             );
 
             const responses = await Promise.all(responsePromises);
-            fetchData();
 
             let allSuccess = true;
             responses.forEach((response) => {
-                if (response.data.status === "success") {
-                    console.log("Row data successfully saved:", response.data);
-                } else {
+                if (response.data.status !== "success") {
                     allSuccess = false;
                     setErrorMessage(response.data.message || "Unknown error");
                 }
@@ -161,25 +101,17 @@ const FormRepeater = () => {
 
             if (allSuccess) {
                 setSuccessMessage("All data successfully saved!");
-                setFormRows([{
-                    box: "Box 1",  // Reset to "Box 1" for new form rows
-                    weight: "",
-                    length: "",
-                    breadth: "",
-                    height: "",
-                    image: null,
-                    packed_by: "",
-                    shipped_date:"",
-                    status:"",
-                }]);
+                setShowSuccessModal(true); // ✅ Show success modal
+                setFormRows([{ id: 1, box: "Box 1", weight: "", length: "", breadth: "", height: "", image: null, packed_by: "", shipped_date: "", status: "" }]);
             } else {
                 setErrorMessage("Some rows failed to save. Please check the data.");
             }
 
+            fetchData();
         } catch (error) {
             console.error("Error during form submission:", error.response ? error.response.data : error.message);
-            // setErrorMessage("Error during form submission. Please try again.");
-            setSuccessMessage(""); // Clear success message
+            setErrorMessage("Error during form submission. Please try again.");
+            setSuccessMessage("");
         }
     };
 
@@ -306,7 +238,7 @@ const FormRepeater = () => {
                                                             <Label htmlFor="packed_by">Status</Label>
                                                             <Input
                                                                 type="select"
-                                                                id="packed_by"
+                                                                id="packed_by7"
                                                                 value={formRow.status}
                                                                 onChange={(e) => handleInputChange(formRow.id, 'status', e.target.value)}
                                                                 className="form-control"

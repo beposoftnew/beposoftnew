@@ -73,7 +73,7 @@ const TotalComponyAssets = () => {
   });
 
   return (
-    <div style={{marginTop:"60px"}} className="container">
+    <div style={{marginTop:"80px"}} className="container">
       <h2 className="text-center mb-4 ">Asset Mangement Information</h2>
 
       {loading ? (

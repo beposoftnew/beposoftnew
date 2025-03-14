@@ -436,6 +436,16 @@ const   FormLayouts = () => {
         window.open(pdfUrl, "_blank");
  
     }
+
+    const handleDownloadAddress = () => {
+        const addressurl = `${import.meta.env.VITE_APP_IMAGE}/shippinglabel/${id}/`;
+        window.open(addressurl, "_blank");
+    }
+
+    const handleDownloadDeliveryNote = () =>{
+        const deliveryNoteUrl = `${import.meta.env.VITE_APP_IMAGE}/deliverynote/${id}/`;
+        window.open(deliveryNoteUrl, "_blank");
+    }
     console.log("order items",orderItems)
 
 
@@ -1012,9 +1022,9 @@ const   FormLayouts = () => {
                                                         <button
                                                             type="button"
                                                             className="btn btn-primary w-100"
-                                                            onClick={() => handleDownload("bill")}
+                                                            onClick={() => handleDownloadAddress()}
                                                         >
-                                                            Download Bill
+                                                            Download address
                                                         </button>
                                                     </div>
                                                 </Col>
@@ -1036,9 +1046,9 @@ const   FormLayouts = () => {
                                                         <button
                                                             type="button"
                                                             className="btn btn-info w-100"
-                                                            onClick={() => handleDownload("billingAddress")}
+                                                            onClick={() => handleDownloadDeliveryNote()}
                                                         >
-                                                            Download Billing Address
+                                                            Download Delivery Note
                                                         </button>
                                                     </div>
                                                 </Col>

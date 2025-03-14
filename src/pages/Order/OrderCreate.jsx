@@ -689,7 +689,7 @@ console.log("cartproducts..:", cartProducts);
                                                                                     <td>{index + 1}</td>
                                                                                     <td>
                                                                                         <img
-                                                                                            src={`${import.meta.env.VITE_APP_IMAGE}/${product.image}`}
+                                                                                            src={`${import.meta.env.VITE_APP_IMAGE}${product.image}`}
                                                                                             alt={product.name || "Product image"}
                                                                                             style={{ width: "50px", height: "50px" }}
                                                                                         />

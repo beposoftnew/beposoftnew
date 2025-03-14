@@ -129,7 +129,7 @@ const BasicTable = () => {
                                                                 <td>{item.name}</td>
                                                                 <td>
                                                                     <img
-                                                                        src={item.image}
+                                                                        src={`${import.meta.env.VITE_APP_IMAGE}${item.image}`}
                                                                         alt={item.name}
                                                                         style={{ width: "50px", height: "50px" }}
                                                                     />
