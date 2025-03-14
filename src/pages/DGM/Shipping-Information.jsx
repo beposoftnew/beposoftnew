@@ -55,6 +55,7 @@ const BasicTable = () => {
             tracking_id: updatedItem.tracking_id
         };
 
+
         console.log("Sending updated fields:", updatedFields);
         
         axios.put(url, updatedFields, {
@@ -72,6 +73,27 @@ const BasicTable = () => {
             console.error("❌ Update failed:", error.response ? error.response.data : error.message);
             alert("Update failed. Try again!");
         });
+    };
+
+    const deleteBox = async (index) => {
+        const updatedItem = editableData[index];
+    
+        try {
+            const response = await axios.delete(`${import.meta.env.VITE_APP_KEY}warehouse/detail/${updatedItem.id}/`, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+                console.log("response", response)
+            // ✅ Check if the response status is 200 (successful deletion)
+            if (response.status === "success") {
+                toast.success("Box deleted successfully!");
+    
+            } else {
+                toast.error("Failed to delete the box.");
+            }
+        } catch (error) {
+            console.error("❌ Error deleting box:", error.response ? error.response.data : error.message);
+            toast.error("Error deleting the box. Try again.");
+        }
     };
 
     return (
@@ -93,6 +115,7 @@ const BasicTable = () => {
                                         <th>Verified by</th>
                                         <th>Date</th>
                                         <th>Action</th>
+                                        <th>Delete</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -132,6 +155,9 @@ const BasicTable = () => {
                                             </td>
                                             <td>
                                                 <Button color="primary" onClick={() => updateDataOnServer(index)}>Save</Button>
+                                            </td>
+                                            <td>
+                                                <Button color="danger" onClick={() => deleteBox(index)}>Delete</Button>
                                             </td>
                                         </tr>
                                     ))}

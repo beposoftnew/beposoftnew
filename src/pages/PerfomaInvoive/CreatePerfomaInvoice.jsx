@@ -410,7 +410,7 @@ const FormLayouts = () => {
                                                         name="company"
                                                         className="form-control"
                                                         id="company"
-                                                        value={formik.values.company}
+                                                        value={formik.values.id}
                                                         onChange={formik.handleChange}
                                                         onBlur={formik.handleBlur}
                                                         invalid={formik.touched.company && formik.errors.company ? true : false}

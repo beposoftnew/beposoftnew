@@ -147,7 +147,7 @@ const FormRepeater = () => {
 
                                                     <Col sm={12} md={6} lg={3} className="mb-3">
                                                         <FormGroup>
-                                                            <Label htmlFor="weight">Weight</Label>
+                                                            <Label htmlFor="weight">Weight (g)</Label>
                                                             <Input
                                                                 type="text"
                                                                 id="weight"
