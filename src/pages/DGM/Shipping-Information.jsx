@@ -84,7 +84,7 @@ const BasicTable = () => {
             });
                 console.log("response", response)
             // ✅ Check if the response status is 200 (successful deletion)
-            if (response.status === "success") {
+            if (response.status === 200) {
                 toast.success("Box deleted successfully!");
     
             } else {
