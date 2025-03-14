@@ -136,13 +136,18 @@ const FormLayouts = () => {
             try {
                 let formData = { ...values };
         
+                // ✅ Convert `loan` to an integer if it's provided
+                if (formData.loan) {
+                    formData.loan = parseInt(formData.loan, 10);
+                }
+        
                 // ✅ Remove name & quantity if asset_types is "expenses"
                 if (values.asset_types === "expenses") {
                     delete formData.name;
                     delete formData.quantity;
         
                     // ✅ If purpose_of_payment is "emi", send to expectemi/ API
-                    if (values.purpose_of_payment === "emi") {
+                    if (purposeOfPayment.find((type) => type.id.toString() === formData.purpose_of_payment)?.name === "emi") {
                         await axios.post(
                             `${import.meta.env.VITE_APP_KEY}expense/add/`,
                             formData,
@@ -152,7 +157,7 @@ const FormLayouts = () => {
                         );
                         setSuccessMessage("Expense with EMI submitted successfully!");
                     } else {
-                        // ✅ Otherwise, send to expense/add/ API
+                        // ✅ Otherwise, send to expense/addexpectemi/ API
                         await axios.post(
                             `${import.meta.env.VITE_APP_KEY}expense/addexpectemi/`,
                             formData,
@@ -164,7 +169,7 @@ const FormLayouts = () => {
                     }
         
                 } else if (values.asset_types === "assets") {
-                    // ✅ If asset_types is "assets", send only to the assest/ API
+                    // ✅ If asset_types is "assets", send only to the asset/ API
                     await axios.post(
                         `${import.meta.env.VITE_APP_KEY}assest/`,
                         formData,
@@ -177,7 +182,7 @@ const FormLayouts = () => {
         
                 setErrorMessage('');
                 resetForm();
-                
+        
             } catch (error) {
                 console.error("Error submitting form:", error);
                 setErrorMessage("An error occurred while submitting the form.");
@@ -185,9 +190,11 @@ const FormLayouts = () => {
             }
         }
         
+        
     });
 
     console.log("emi detailsss", EmiDetails);
+    console.log("purpose of payment ss", formik.values.purpose_of_payment);
 
 
     return (
@@ -381,58 +388,65 @@ const FormLayouts = () => {
                                         </Row>
 
                                         <Row>
-                                            <Col lg={4}>
-                                                <div className="mb-3">
-                                                    <Label htmlFor="formrow-Inputpurpose_of_payment">Purpose Of Payment</Label>
-                                                 <select
-                                                        name="purpose_of_payment"
-                                                        id="formrow-product_type-Input"
-                                                        className="form-control"
-                                                        value={formik.values.purpose_of_payment}
-                                                        onChange={formik.handleChange}
-                                                        onBlur={formik.handleBlur}
-                                                        invalid={formik.touched.purpose_of_payment && formik.errors.purpose_of_payment}
-                                                    >
-                                                        <option value="">Choose...</option>
-                                                        {purposeOfPayment.map((type) => (
-                                                            <option key={type.id} value={type.id}>{type.name}</option>
-                                                        ))}
-                                                    </select>
-                                                    {formik.errors.purpose_of_payment && formik.touched.purpose_of_payment ? (
-                                                        <FormFeedback type="invalid">{formik.errors.purpose_of_payment}</FormFeedback>
-                                                    ) : null}
-                                                </div>
-                                                {formik.values.purpose_of_payment === "emi" && (
-                                                <Col lg={4}>
-                                                    <div className="mb-3">
-                                                        <Label htmlFor="formrow-loan">Select EMI</Label>
-                                                        <Input
-                                                            type="select"
-                                                            name="loan"
-                                                            id="formrow-loan"
-                                                            className="form-control"
-                                                            value={formik.values.loan}
-                                                            onChange={formik.handleChange}
-                                                            onBlur={formik.handleBlur}
-                                                            invalid={formik.touched.loan && formik.errors.loan}
-                                                        >
-                                                            <option value="">Select EMI</option>
-                                                        {EmiDetails && EmiDetails.length > 0 ? (
-                                                            EmiDetails.map((emi) => (
-                                                                <option key={emi.id} value={emi.id}>{emi.emi_name}</option>
-                                                            ))
-                                                        ) : (
-                                                            <option disabled>Loading EMI details...</option>
-                                                        )}
+                                        <Col lg={4}>
+    <div className="mb-3">
+        <Label htmlFor="formrow-Inputpurpose_of_payment">Purpose Of Payment</Label>
+        <select
+            name="purpose_of_payment"
+            id="formrow-product_type-Input"
+            className="form-control"
+            value={formik.values.purpose_of_payment || ""} // Store only ID
+            onChange={(e) => {
+                const selectedId = e.target.value;
+                formik.setFieldValue("purpose_of_payment", selectedId); // Store ID only
+            }}
+            onBlur={formik.handleBlur}
+        >
+            <option value="">Choose...</option>
+            {purposeOfPayment.map((type) => (
+                <option key={type.id} value={type.id}>
+                    {type.name}
+                </option>
+            ))}
+        </select>
+        {formik.errors.purpose_of_payment && formik.touched.purpose_of_payment ? (
+            <FormFeedback type="invalid">{formik.errors.purpose_of_payment}</FormFeedback>
+        ) : null}
+    </div>
+</Col>
 
-                                                        </Input>
-                                                        {formik.errors.loan && formik.touched.loan ? (
-                                                            <FormFeedback type="invalid">{formik.errors.loan}</FormFeedback>
-                                                        ) : null}
-                                                    </div>
-                                                </Col>
-                                            )}
-                                            </Col>
+{/* ✅ Check if selected purpose_of_payment ID matches "emi" by looking up its name */}
+{purposeOfPayment.find((type) => type.id.toString() === formik.values.purpose_of_payment)?.name === "emi" && (
+    <Col lg={4}>
+        <div className="mb-3">
+            <Label htmlFor="formrow-loan">Select EMI</Label>
+            <Input
+                type="select"
+                name="loan"
+                id="formrow-loan"
+                className="form-control"
+                value={formik.values.loan}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                invalid={formik.touched.loan && formik.errors.loan}
+            >
+                <option value="">Select EMI</option>
+                {EmiDetails && EmiDetails.length > 0 ? (
+                    EmiDetails.map((emi) => (
+                        <option key={emi.id} value={emi.id}>{emi.emi_name}</option>
+                    ))
+                ) : (
+                    <option disabled>Loading EMI details...</option>
+                )}
+            </Input>
+            {formik.errors.loan && formik.touched.loan ? (
+                <FormFeedback type="invalid">{formik.errors.loan}</FormFeedback>
+            ) : null}
+        </div>
+    </Col>
+)}
+
+
 
                                             <Col lg={4}>
                                                 <div className="mb-3">

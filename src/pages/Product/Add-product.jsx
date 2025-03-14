@@ -100,9 +100,6 @@
                   setIsLoading(false);
                 }
               }
-              
-            
-            
         
         });
 
