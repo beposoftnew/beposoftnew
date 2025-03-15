@@ -50,7 +50,7 @@ const FormLayouts = () => {
     const formik = useFormik({
         initialValues: {
             state: "",
-            company: "BEPOSITIVERACING PVT LTD",
+            company: "",
             family: "",
             customer: "",
             manage_staff: "",
@@ -86,6 +86,8 @@ const FormLayouts = () => {
                 total_amount: updatedTotalAmount.toFixed(2),  // Ensure correct value is used
             };
             setIsLoading(true);
+
+            console.log("data to submit", dataToSubmit);
         
             try {
                 const response = await axios.post(
@@ -128,7 +130,7 @@ const FormLayouts = () => {
     });
 
 
-    console.log("compony details..:", companys);
+    console.log("compony details..:",);
 
     const generateInvoice = async () => {
         const doc = new jsPDF();
@@ -387,7 +389,7 @@ const FormLayouts = () => {
 
     const isInvalid = (name) => formik.touched[name] && formik.errors[name] ? true : false;
 
-
+console.log("compnysss", companys);
 
     return (
         <React.Fragment>
@@ -402,31 +404,35 @@ const FormLayouts = () => {
 
                                     <Form onSubmit={formik.handleSubmit}>
                                         <Row>
-                                            <Col md={6}>
-                                                <div className="mb-3">
-                                                    <Label htmlFor="company">Company</Label>
-                                                    <Input
-                                                        type="select"
-                                                        name="company"
-                                                        className="form-control"
-                                                        id="company"
-                                                        value={formik.values.id}
-                                                        onChange={formik.handleChange}
-                                                        onBlur={formik.handleBlur}
-                                                        invalid={formik.touched.company && formik.errors.company ? true : false}
-                                                    >
-                                                        <option value="" disabled>Select a company</option>
-                                                        {companys.map((company, index) => (
-                                                            <option key={index} value={company.id}>
-                                                                {company.name}
-                                                            </option>
-                                                        ))}
-                                                    </Input>
-                                                    {formik.errors.company && formik.touched.company ? (
-                                                        <FormFeedback type="invalid">{formik.errors.company}</FormFeedback>
-                                                    ) : null}
-                                                </div>
-                                            </Col>
+                                        <Col md={6}>
+    <div className="mb-3">
+        <Label htmlFor="company">Company</Label>
+        <Input
+            type="select"
+            name="company"
+            className="form-control"
+            id="company"
+            value={formik.values.company}  // Bind to Formik value
+            onChange={(e) => {
+                const selectedCompanyId = e.target.value;
+                formik.setFieldValue("company", selectedCompanyId); // Store ID in Formik
+            }}
+            onBlur={formik.handleBlur}
+            invalid={formik.touched.company && formik.errors.company ? true : false}
+        >
+            <option value="" disabled>Select a company</option>
+            {companys.map((company) => (
+                <option key={company.id} value={company.id}>
+                    {company.name}
+                </option>
+            ))}
+        </Input>
+        {formik.errors.company && formik.touched.company ? (
+            <FormFeedback type="invalid">{formik.errors.company}</FormFeedback>
+        ) : null}
+    </div>
+</Col>
+
 
                                             <Col md={6}>
                                                 <div className="mb-3">

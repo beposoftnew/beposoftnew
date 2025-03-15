@@ -96,6 +96,8 @@ const BasicTable = () => {
         }
     };
 
+    console.log("editable by", editableData);
+
     return (
         <div className="page-content">
             <div className="container-fluid">
