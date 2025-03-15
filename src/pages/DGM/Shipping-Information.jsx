@@ -12,6 +12,15 @@ const BasicTable = () => {
     const [editableData, setEditableData] = useState([]);
     const token = localStorage.getItem('token');
 
+
+
+    const [status, setStatus] = useState([
+        "Packing under progress",
+        "Packed",
+        "Ready to ship",
+        "Shipped",
+    ]);
+
     useEffect(() => {
         axios.get(`${import.meta.env.VITE_APP_KEY}order/${id}/items/`, {
             headers: { Authorization: `Bearer ${token}` }
@@ -52,7 +61,8 @@ const BasicTable = () => {
             verified_by: updatedItem.verified_by,
             shipped_date: updatedItem.shipped_date,
             parcel_service: updatedItem.parcel_service,
-            tracking_id: updatedItem.tracking_id
+            tracking_id: updatedItem.tracking_id,
+            status: updatedItem.status,
         };
 
 
@@ -114,6 +124,7 @@ const BasicTable = () => {
                                         <th>Tracking ID</th>
                                         <th>Image</th>
                                         <th>Packed by</th>
+                                        <th>Status</th>
                                         <th>Verified by</th>
                                         <th>Date</th>
                                         <th>Action</th>
@@ -144,6 +155,14 @@ const BasicTable = () => {
                                                 )}
                                             </td>
                                             <td>{item.packed_by || "N/A"}</td>
+                                            <td>
+                                                <select value={item.verified_by || ""} onChange={(e) => handleInputChange(e, index, "status")}>
+                                                    <option value="">{item.status}</option>
+                                                    {status.map(staff => (
+                                                        <option key={staff} value={staff}>{staff}</option>
+                                                    ))}
+                                                </select>
+                                            </td>
                                             <td>
                                                 <select value={item.verified_by || ""} onChange={(e) => handleInputChange(e, index, "verified_by")}>
                                                     <option value="">Select</option>
