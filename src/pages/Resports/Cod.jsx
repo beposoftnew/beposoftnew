@@ -32,20 +32,20 @@ const useDebounce = (value, delay) => {
 };
 
 const BasicTable = () => {
-    const [data, setData] = useState([]); // Holds the full data
+    const [data, setData] = useState([]); 
     const [loading, setLoading] = useState(true);
-    const [staffFilter, setStaffFilter] = useState(""); // State for staff filter
-    const [familyFilter, setFamilyFilter] = useState(""); // State for family filter
-    const [allStaffs, setAllStaffs] = useState([]); // All staff data
-    const [allFamilies, setAllFamilies] = useState([]); // All families data
-    const [searchTerm, setSearchTerm] = useState(""); // State for search term
+    const [staffFilter, setStaffFilter] = useState(""); 
+    const [familyFilter, setFamilyFilter] = useState(""); 
+    const [allStaffs, setAllStaffs] = useState([]); 
+    const [allFamilies, setAllFamilies] = useState([]); 
+    const [searchTerm, setSearchTerm] = useState(""); 
 
-    // Debounced search term
-    const debouncedSearchTerm = useDebounce(searchTerm, 500); // Adjust debounce delay as needed
+
+    const debouncedSearchTerm = useDebounce(searchTerm, 500); 
 
     // Fetch data using Axios
     useEffect(() => {
-        const token = localStorage.getItem('token');  // Replace with actual method of fetching token
+        const token = localStorage.getItem('token');  
 
         // Fetch all staff data
         axios.get(`${import.meta.env.VITE_APP_KEY}staffs/`, {
@@ -73,7 +73,7 @@ const BasicTable = () => {
                 console.error("There was an error fetching family data!", error);
             });
 
-        // Fetch the sales report data based on the current filters
+
         const fetchData = () => {
             setLoading(true);
             axios.get(`${import.meta.env.VITE_APP_KEY}COD/sales/`, {
@@ -81,12 +81,12 @@ const BasicTable = () => {
                     Authorization: `Bearer ${token}`
                 },
                 params: {
-                    staff: staffFilter,  // Add staff filter
-                    family: familyFilter,  // Add family filter
+                    staff: staffFilter,  
+                    family: familyFilter,  
                 }
             })
                 .then((response) => {
-                    setData(response.data); // Set the fetched data to state
+                    setData(response.data); 
                     setLoading(false);
                 })
                 .catch((error) => {
@@ -95,10 +95,10 @@ const BasicTable = () => {
                 });
         };
 
-        fetchData(); // Fetch the data on mount or when filters change
-    }, [staffFilter, familyFilter]); // Dependencies: fetch data only when staffFilter or familyFilter change
+        fetchData(); 
+    }, [staffFilter, familyFilter]); 
 
-    // Filter data based on staff, family, and search term
+
     const filteredData = data.filter((item) => {
         return (
             (staffFilter ? item.orders.some((order) => order.staff_name === staffFilter) : true) &&

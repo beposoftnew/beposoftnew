@@ -8,6 +8,7 @@ import axios from 'axios';
 import AddProduct from "./AddCreatedOrderProducts";
 import Information from "./information"
 import Paymentrecipent from "./PaymentRecipt"
+import { useNavigate } from "react-router-dom";
 
 
 // Import Breadcrumb
@@ -40,6 +41,13 @@ const   FormLayouts = () => {
     const [selectedBank, setSelectedBank] = useState('');
     const [isAddDisabled, setIsAddDisabled] = useState(false);
 
+
+    const navigate = useNavigate();
+
+    const handleNameClick = (updateId) => {
+        navigate(`/customer/${updateId}/edit/`);
+    };
+
     // const {id} = useParams();
 
     console.log(id);
@@ -66,6 +74,7 @@ const   FormLayouts = () => {
 
     });
     const [billingAddress, setBillingAddress] = useState({
+        id:"",
         name: "",
         phone: "",
         gst: "",
@@ -100,15 +109,7 @@ const   FormLayouts = () => {
 
         onSubmit: async (values) => {
             try {
-                // Calculate the total amount
-                // const subtotal = values.items.reduce((sum, item) => {
-                //     const itemTotal = item.quantity * (item.rate - item.discount);
-                //     return sum + itemTotal;
-                // }, 0);
-        
-                // const totalAmount = subtotal + parseFloat(values.shipping_charge || 0);
-        
-                // Make the PUT request to save data
+
                 const response = await fetch(`${import.meta.env.VITE_APP_KEY}orders/update/${id}/`, {
                     method: "PUT",
                     headers: {
@@ -118,8 +119,7 @@ const   FormLayouts = () => {
                     body: JSON.stringify({
                         cod_amount: values.cod_amount,
                         shipping_mode: values.shipping_mode,
-                        // shipping_charge: values.shipping_charge,
-                        // total_amount: totalAmount, // Save the total amount
+
                     }),
                 });
 
@@ -227,6 +227,7 @@ const   FormLayouts = () => {
                 });
 
                 setBillingAddress({
+                    id: data.order.customer?.id || "",
                     name: data.order.customer?.name || "",
                     address: data.order.customer?.address || "",
                     email: data.order.customer?.email || "",
@@ -447,6 +448,9 @@ const   FormLayouts = () => {
         window.open(deliveryNoteUrl, "_blank");
     }
     console.log("order items",orderItems)
+
+
+    console.log("billing address", billingAddress);
 
 
     return (
@@ -720,14 +724,23 @@ const   FormLayouts = () => {
                                         <h2 style={{ display: "flex", alignItems: "center", gap: "10px", color: "#333", borderBottom: "1px solid #e0e0e0", paddingBottom: "10px" }}>
                                             <span role="img" aria-label="Billing Icon">💳</span> Billing Address
                                         </h2>
-                                        <div style={{ marginTop: "20px" }}>
-                                            <p><strong>Name:</strong> {billingAddress.name}</p>
-                                            <p><strong>Street:</strong> {billingAddress.address}</p>
-                                            <p><strong>City:</strong> {billingAddress.city}</p>
-                                            <p><strong>State:</strong> {billingAddress.state}</p>
-                                            <p><strong>Zip Code:</strong> {billingAddress.zipcode}</p>
-                                            <p><strong>GST:</strong> {billingAddress.gst}</p>
-                                        </div>
+                                        <div style={{ marginTop: '20px' }}>
+    <p>
+        <strong>Name:</strong>
+        <span
+            onClick={ () =>handleNameClick(billingAddress?.id)}
+            style={{ color: 'white', background:"blue", padding:"10px 10px",  cursor: 'pointer' }}
+        >
+            {billingAddress.name}
+        </span>
+    </p>
+    <p><strong>Street:</strong> {billingAddress.address}</p>
+    <p><strong>City:</strong> {billingAddress.city}</p>
+    <p><strong>State:</strong> {billingAddress.state}</p>
+    <p><strong>Zip Code:</strong> {billingAddress.zipcode}</p>
+    <p><strong>GST:</strong> {billingAddress.gst}</p>
+</div>
+
                                     </div>
 
                                     {/* Shipping Address Card */}

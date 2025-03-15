@@ -118,11 +118,24 @@ console.log(warehouseId);
     };
 
     const handleQuantityChange = (productId, value) => {
-        setQuantity((prev) => ({
-            ...prev,
-            [productId]: value,
-        }));
+        const parsedValue = parseInt(value, 10);
+        const product = products.find(p => p.id === productId);
+        const stock = product ? product.stock : 0;
+    
+        if (parsedValue > stock) {
+            setQuantity((prev) => ({
+                ...prev,
+                [productId]: stock,
+            }));
+            alert(`Quantity cannot exceed available stock of ${stock}.`);
+        } else {
+            setQuantity((prev) => ({
+                ...prev,
+                [productId]: parsedValue,
+            }));
+        }
     };
+    
 
     const addToCart = async (product, variant = null) => {
         const cartItem = {
@@ -205,16 +218,16 @@ console.log(warehouseId);
                                                 <td>₹{product.selling_price ? product.selling_price.toFixed(2) : "N/A"}</td>
                                                 <td>{product.stock || 0}</td>
                                                 <td>
-                                                    <Input
-                                                        type="number"
-                                                        min="1"
-                                                        value={quantity[product.id] || 1}
-                                                        onChange={(e) =>
-                                                            handleQuantityChange(product.id, e.target.value)
-                                                        }
-                                                        className="form-control"
-                                                        placeholder="Quantity"
-                                                    />
+                                                <Input
+                                                    type="number"
+                                                    min="1"
+                                                    max={product.stock || 0}
+                                                    value={quantity[product.id] || 1}
+                                                    onChange={(e) => handleQuantityChange(product.id, e.target.value)}
+                                                    className="form-control"
+                                                    placeholder="Quantity"
+                                                />
+
                                                 </td>
                                                 <td>
                                                     <Button

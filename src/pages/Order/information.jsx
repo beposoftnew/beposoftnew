@@ -62,11 +62,15 @@ const UpdateInformationPage = () => {
             setStatusOptions(["Invoice Approved"]);
         } else {
             setStatusOptions([
-                "Invoice Created",
-                "Invoice Approved",
-                "Waiting For Confirmation",
-                "To Print",
-                "Invoice Rejected"
+         "Invoice Created",
+        "Invoice Approved",
+        "Waiting For Confirmation",
+        "To Print",
+        "Invoice Rejected",
+        'Packing under progress',
+        'Packed',
+        'Ready to ship',
+        'Shipped',
             ]);
         }
     }, []);

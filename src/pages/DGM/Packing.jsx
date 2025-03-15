@@ -1,5 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { Navigate, useParams } from "react-router-dom"; 
+import axios from "axios"
+import PackingInformation from "./Packing-Information"
+import ShippingInformation from "./Shipping-Information"
+import { useNavigate } from "react-router-dom";
 import {
     Card,
     Col,
@@ -9,13 +13,15 @@ import {
     CardTitle,
     Label,
     Input,
-    Table ,
+    Table,
     Button,
+    Dropdown,
+    DropdownToggle,
+    DropdownMenu,
+    DropdownItem,
+    Form,
 } from "reactstrap";
-import axios from "axios"
-import PackingInformation from "./Packing-Information"
-import ShippingInformation from "./Shipping-Information"
-import { useNavigate } from "react-router-dom";
+
 
 
 import Breadcrumbs from "../../components/Common/Breadcrumb";
@@ -28,6 +34,10 @@ const FormLayouts = () => {
     const [loading, setLoading] = useState(true);
     const token = localStorage.getItem('token');
     const navigate = useNavigate();
+    const [dropdownOpen, setDropdownOpen] = useState(false);
+    const [selectedStatus, setSelectedStatus] = useState("");
+
+
 
     const downloadShippingAddress = () => {
         window.open(`${import.meta.env.VITE_APP_IMAGE}/shippinglabel/${id}/`, "_blank");
@@ -37,6 +47,21 @@ const FormLayouts = () => {
         window.open(`${import.meta.env.VITE_APP_IMAGE}/deliverynote/${id}/`, "_blank");
     };
     
+    const toggleDropdown = () => setDropdownOpen(prevState => !prevState);
+
+
+    const handleStatusChange = (newStatus) => {
+        setSelectedStatus(newStatus);
+    };
+    const [status, setStatus] = useState([
+        "To Print",
+        "Packing under progress",
+        "Packed",
+        "Ready to ship",
+        "Shipped",
+    ]);
+
+
 
     useEffect(() => {
         const fetchOrderData = async () => {
@@ -46,7 +71,8 @@ const FormLayouts = () => {
                         'Authorization': `Bearer ${token}`
                     }
                 });
-                setOrderData(response.data.order); 
+                setOrderData(response.data.order);
+                setSelectedStatus(response.data.order?.status || ""); 
             } catch (error) {   
                 console.error("Error fetching order data:", error);
             } finally {
@@ -56,6 +82,24 @@ const FormLayouts = () => {
 
         fetchOrderData();
     }, [id]);
+
+    const handleSubmit = async (event) => {
+        event.preventDefault();
+        try {
+            await axios.put( `${import.meta.env.VITE_APP_KEY}order/status/update/${id}/`, {
+                status: selectedStatus,
+            }, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            })
+            alert("Status updated successfully");
+        } catch (error) {
+            console.error("Error updating status:", error);
+            alert("Failed to update status");
+        }
+    };
+
 
     if (loading) {
         return <div>Loading...</div>; 
@@ -132,6 +176,41 @@ const FormLayouts = () => {
                                                 />
                                             </div>
                                         </Col>
+                                              {/* <Col md={6} lg={3}>
+                                            <div className="mb-3">
+                                                <Label htmlFor="formrow-status-Input">Current Status</Label>
+                                                <Input
+                                                    type="text"
+                                                    name="status"
+                                                    className="form-control"
+                                                    id="formrow-status-Input"
+                                                    value={selectedStatus}
+                                                    readOnly
+                                                />
+                                            </div>
+                                        </Col> */}
+                                        <Col  md={6} lg={3} className="d-flex align-items-end">
+                                            <Form onSubmit={handleSubmit} className="w-100">
+                                                <div className="d-flex">
+                                                    <Dropdown isOpen={dropdownOpen} toggle={toggleDropdown} className="me-3 flex-grow-1">
+                                                        <DropdownToggle caret className="w-100">
+                                                            {selectedStatus || "Select Status"}
+                                                        </DropdownToggle>
+                                                        <DropdownMenu className="w-100">
+                                                            {status.map((stat, index) => (
+                                                                <DropdownItem key={index} onClick={() => handleStatusChange(stat)}>
+                                                                    {stat}
+                                                                </DropdownItem>
+                                                            ))}
+                                                        </DropdownMenu>
+                                                    </Dropdown>
+                                                    <Button type="submit" color="primary">
+                                                        Update
+                                                    </Button>
+                                                </div>
+                                            </Form>
+                                        </Col>
+
                                     </Row>
                                 </CardBody>
                                 <CardBody>
