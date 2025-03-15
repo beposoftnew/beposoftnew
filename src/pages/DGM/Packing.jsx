@@ -110,6 +110,9 @@ const FormLayouts = () => {
     const warehouseData = orderData?.warehouse;
 
 
+    console.log("warehoissssssss", warehouseData);
+
+
     console.log("order data,", orderData?.items);
 
     return (

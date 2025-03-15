@@ -51,6 +51,8 @@ const BasicTable = () => {
     const handleInputChange = (e, index, field) => {
         const newData = [...editableData];
         newData[index][field] = e.target.value;
+
+        console.log("newdata information",newData);
         setEditableData(newData);
     };
 
@@ -85,6 +87,8 @@ const BasicTable = () => {
         });
     };
 
+    console.log("wsddasddbsadbdsdsd", warehouseData);
+
     const deleteBox = async (index) => {
         const updatedItem = editableData[index];
     
@@ -106,7 +110,34 @@ const BasicTable = () => {
         }
     };
 
+
+    const sendTracking = async (index) => {
+
+        try {
+
+            const response = await axios.post(`${import.meta.env.VITE_APP_KEY}sendtrackingid/`, {
+                tracking_id: editableData[index].tracking_id,
+                name : warehouseData[0]?.customer,
+                order_id: warehouseData[0]?.invoice,
+                phone: warehouseData[0]?.phone,
+
+                header:{
+                    Authorization: `Bearer ${token}`
+                }
+            })
+
+            if(response.status === 200){
+                console.log("sms send successs");
+                toast.success("sms send successfu")
+            }
+        }catch(error){
+            console.error("❌ Error sending sms:", error.response ? error.response.data : error.message);
+            toast.error("Error sending sms. Try again.");
+        }
+    }
+
     console.log("editable by", editableData);
+    console.log("parcel service", parcelServices);
 
     return (
         <div className="page-content">
@@ -129,6 +160,7 @@ const BasicTable = () => {
                                         <th>Date</th>
                                         <th>Action</th>
                                         <th>Delete</th>
+                                        <th>sms</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -140,7 +172,7 @@ const BasicTable = () => {
                                                 <select value={item.parcel_service || ""} onChange={(e) => handleInputChange(e, index, "parcel_service")}>
                                                     <option value="">{item.parcel_service ? item.parcel_service : "Select"}</option>
                                                     {parcelServices.map(service => (
-                                                        <option key={service.id} value={service.id}>{service.name}</option>
+                                                        <option key={service.id} value={service?.id}>{service.name}</option>
                                                     ))}
                                                 </select>
                                             </td>
@@ -180,6 +212,11 @@ const BasicTable = () => {
                                             <td>
                                                 <Button color="danger" onClick={() => deleteBox(index)}>Delete</Button>
                                             </td>
+                                            <td>
+                {item.status === "Shipped" && (
+                    <Button color="success" onClick={() => sendTracking(index)}>Send Sms</Button>
+                )}
+            </td>
                                         </tr>
                                     ))}
                                 </tbody>
